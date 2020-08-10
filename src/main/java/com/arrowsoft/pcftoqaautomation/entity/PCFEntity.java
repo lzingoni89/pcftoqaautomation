@@ -1,11 +1,13 @@
 package com.arrowsoft.pcftoqaautomation.entity;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Data
 @Entity
+@NoArgsConstructor
 @Table(name = "gw_pcf")
 public class PCFEntity {
 
