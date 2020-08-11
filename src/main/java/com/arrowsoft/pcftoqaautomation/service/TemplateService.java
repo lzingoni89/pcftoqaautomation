@@ -56,7 +56,6 @@ public class TemplateService {
             }
             var pcf = pcfResult.get();
             root.put("pcf", pcf.getPcfName().substring(0, pcf.getPcfName().indexOf(".pcf")));
-            root.put("container", pcf.getContainer());
             temp.process(root, out);
 
         } catch (Exception e) {

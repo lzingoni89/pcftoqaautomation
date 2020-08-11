@@ -2,6 +2,7 @@ package com.arrowsoft.pcftoqaautomation.service;
 
 import com.arrowsoft.pcftoqaautomation.entity.PCFEntity;
 import com.arrowsoft.pcftoqaautomation.entity.WidgetEntity;
+import com.arrowsoft.pcftoqaautomation.entity.WidgetTypeEntity;
 import com.arrowsoft.pcftoqaautomation.repository.PCFRepository;
 import com.arrowsoft.pcftoqaautomation.repository.WidgetRepository;
 import lombok.extern.log4j.Log4j2;
@@ -34,11 +35,11 @@ public class ImportPCFService {
             log.info("Container element not found");
             return;
         }
-        var containerWidget = new WidgetEntity(containerElement);
-        saveWidget(containerWidget);
-        readNodeChildren(containerElement, containerWidget);
-        var pcf = new PCFEntity(pcfFile.getName(), pcfFile.getPath(), containerWidget);
+        var pcf = new PCFEntity(pcfFile.getName(), pcfFile.getPath());
         savePCF(pcf);
+        var containerWidget = new WidgetEntity(pcf, null, containerElement); //TODO new WidgetTypeEntity()
+        saveWidget(containerWidget);
+        readNodeChildren(pcf, containerElement, containerWidget);
 
     }
 
@@ -70,7 +71,7 @@ public class ImportPCFService {
 
     }
 
-    private void readNodeChildren(Element parentElement, WidgetEntity parentWidget) {
+    private void readNodeChildren(PCFEntity pcf, Element parentElement, WidgetEntity parentWidget) {
         var childNodes = parentElement.getChildNodes();
         var childNodesLength = childNodes.getLength();
         if (childNodesLength == 0) {
@@ -82,9 +83,9 @@ public class ImportPCFService {
                 continue;
             }
             var element = (Element) node;
-            var widget = new WidgetEntity(element, parentWidget);
+            var widget = new WidgetEntity(pcf, null, element, parentWidget); //TODO new WidgetTypeEntity()
             saveWidget(widget);
-            readNodeChildren(element, widget);
+            readNodeChildren(pcf, element, widget);
 
         }
 
@@ -105,8 +106,8 @@ public class ImportPCFService {
         if (!log.isInfoEnabled()) {
             return;
         }
-        log.info("Widget Tag: " + widget.getWidget());
-        log.info("Widget ID: " + widget.getWidgetID());
+//TODO        log.info("Widget Tag: " + widget.getWidgetType().getType());
+        log.info("Widget ID: " + widget.getWidgetPCFID());
         log.info("Widget Ref: " + widget.getRefPCF());
         log.info("Widget RenderID: " + widget.getRenderID());
         log.info("---------------------------------------");

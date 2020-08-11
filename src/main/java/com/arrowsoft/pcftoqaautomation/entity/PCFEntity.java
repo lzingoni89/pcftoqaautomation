@@ -1,28 +1,35 @@
 package com.arrowsoft.pcftoqaautomation.entity;
 
+import com.arrowsoft.pcftoqaautomation.entity.base.BaseEntity;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Data
 @Entity
 @NoArgsConstructor
 @Table(name = "gw_pcf")
-public class PCFEntity {
+@EqualsAndHashCode(callSuper = true)
+public class PCFEntity extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @Column(name = "pcf_name")
     private String pcfName;
-    private String pcfFilePath;
-    @ManyToOne
-    private WidgetEntity container;
 
-    public PCFEntity(String pcfName, String pcfFilePath, WidgetEntity container) {
+    @Column(name = "pcf_folder_path")
+    private String pcfFilePath;
+
+    @Column(name = "pcf_file_name")
+    private String pcfFileName;
+
+    @OneToMany(mappedBy = "pcf", fetch = FetchType.LAZY)
+    private Set<WidgetEntity> widgets;
+
+    public PCFEntity(String pcfName, String pcfFilePath) {
         this.pcfName = pcfName;
         this.pcfFilePath = pcfFilePath;
-        this.container = container;
 
     }
 

@@ -6,9 +6,9 @@ namespace SB10.BillingCenter
 {
     public class ${pcf}Elements : IPageElements
     {
-<#list container.children as widget>
+<#list pcf.widgets as widget>
         [FindsBy(How = How.Id, Using = "${widget.renderID}")]
-        public IWebElement ${widget.widgetID} { get; set; }
+        public IWebElement ${widget.widgetPCFID} { get; set; }
 
 </#list>
     }
