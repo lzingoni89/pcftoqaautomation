@@ -34,4 +34,12 @@ public class ProjectEntity extends BaseEntity {
     @Column(name = "admin_git_repository")
     private boolean adminGitRepository;
 
+    public ProjectEntity(CompanyEntity company, ModuleEnum module) {
+        this.company = company;
+        this.module = module;
+        this.version = GWVersionEnum.VER_10;
+        this.adminGitRepository = false;
+
+    }
+
 }

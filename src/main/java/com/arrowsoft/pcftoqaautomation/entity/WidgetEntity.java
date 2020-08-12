@@ -38,7 +38,7 @@ public class WidgetEntity extends BaseEntity {
     private WidgetEntity parent;
 
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
-    public Set<WidgetEntity> children;
+    private Set<WidgetEntity> children;
 
     public WidgetEntity(PCFEntity pcf, WidgetTypeEntity widgetType, Element widgetElement) {
         this.pcf = pcf;

@@ -3,6 +3,7 @@ package com.arrowsoft.pcftoqaautomation.service;
 import com.arrowsoft.pcftoqaautomation.batch.BatchProcessCode;
 import com.arrowsoft.pcftoqaautomation.batch.dto.BatchProcessCodeDTO;
 import com.arrowsoft.pcftoqaautomation.batch.dto.JobExecutionDTO;
+import com.vaadin.flow.spring.annotation.VaadinSessionScope;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.JobParametersInvalidException;

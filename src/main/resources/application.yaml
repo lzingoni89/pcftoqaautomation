@@ -4,9 +4,6 @@ spring:
     username: root
     password: root
     driverClassName: com.mysql.cj.jdbc.Driver
-    tomcat:
-      test-while-idle: true
-      validation-query: SELECT 1
   jpa:
     database: mysql
     generate-ddl: true
@@ -15,7 +12,6 @@ spring:
       ddl-auto: update
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL5Dialect
         jdbc:
           batch_size: 2048
           order_inserts: false

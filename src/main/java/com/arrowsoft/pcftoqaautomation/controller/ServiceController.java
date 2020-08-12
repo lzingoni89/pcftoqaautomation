@@ -3,6 +3,7 @@ package com.arrowsoft.pcftoqaautomation.controller;
 import com.arrowsoft.pcftoqaautomation.service.ImportPCFService;
 import com.arrowsoft.pcftoqaautomation.service.TemplateService;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.io.FileUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,12 +30,11 @@ public class ServiceController {
     @GetMapping("/import")
     public void executeImportPCFService() throws ParserConfigurationException, SAXException, IOException {
         log.info("executeImportPCFService() - Start");
-        var pcfFile = new File("sample/pcf/TabBar.pcf");
-        if (!pcfFile.exists()) {
-            log.info("File not found");
-            return;
+        var pcfFolder = new File("sample/pcf");
+        var files = FileUtils.iterateFiles(pcfFolder, new String[] { "pcf" }, true);
+        while (files.hasNext()) {
+            importPCFService.readPCF(files.next());
         }
-        importPCFService.readPCF(pcfFile);
 
     }
 

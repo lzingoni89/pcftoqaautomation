@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Data
 @Entity
@@ -25,9 +24,6 @@ public class CompanyEntity extends BaseEntity {
     @Column(name = "company_cod_intern")
     @Enumerated(EnumType.STRING)
     private CompanyEnum companyCodIntern;
-
-    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
-    private Set<ProjectEntity> projects;
 
     public CompanyEntity(CompanyEnum companyEnum) {
         this.codNamespace = companyEnum.getCodNamespace();
