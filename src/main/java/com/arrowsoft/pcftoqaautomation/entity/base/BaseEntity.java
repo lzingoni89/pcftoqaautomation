@@ -1,30 +1,29 @@
 package com.arrowsoft.pcftoqaautomation.entity.base;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.Instant;
 
-@Data
+@Getter
+@Setter
 @MappedSuperclass
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public abstract class BaseEntity {
 
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @EqualsAndHashCode.Include
     private Long id;
 
     @CreatedDate
-    @Column(name = "CreatedDate", updatable = false)
+    @Column(name = "created_date", updatable = false)
     private Instant createdDate;
 
     @LastModifiedDate
-    @Column(name = "LastModifiedDate")
+    @Column(name = "last_modified_date")
     private Instant lastModifiedDate;
 
     @PrePersist

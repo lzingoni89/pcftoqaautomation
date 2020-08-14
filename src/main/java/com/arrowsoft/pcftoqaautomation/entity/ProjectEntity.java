@@ -3,17 +3,17 @@ package com.arrowsoft.pcftoqaautomation.entity;
 import com.arrowsoft.pcftoqaautomation.entity.base.BaseEntity;
 import com.arrowsoft.pcftoqaautomation.enums.GWVersionEnum;
 import com.arrowsoft.pcftoqaautomation.enums.ModuleEnum;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
-@Data
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
 @Table(name = "gw_project")
-@EqualsAndHashCode(callSuper = true)
 public class ProjectEntity extends BaseEntity {
 
     @JoinColumn(name = "company_id")

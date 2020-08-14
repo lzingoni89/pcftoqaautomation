@@ -5,6 +5,8 @@ import lombok.Getter;
 @Getter
 public enum CompanyEnum {
 
+    SANDBOX_10("SB10", "SandBox 10"),
+    SANDBOX_9("SB9", "SandBox 9"),
     SURA("SURA", "Sura"),
     SANCOR("SANCOR", "Sancor"),
     SAN_CRISTOBAL("SC", "San Cristobal"),

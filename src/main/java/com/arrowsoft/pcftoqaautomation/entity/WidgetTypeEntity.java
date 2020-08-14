@@ -5,26 +5,26 @@ import com.arrowsoft.pcftoqaautomation.enums.GWVersionEnum;
 import com.arrowsoft.pcftoqaautomation.enums.WidgetHowFindEnum;
 import com.arrowsoft.pcftoqaautomation.enums.WidgetPrefixEnum;
 import com.arrowsoft.pcftoqaautomation.enums.WidgetTypeEnum;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
-@Data
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
 @Table(name = "gw_widgettype")
-@EqualsAndHashCode(callSuper = true)
 public class WidgetTypeEntity extends BaseEntity {
-
-    @Column(name = "version")
-    @Enumerated(EnumType.STRING)
-    private GWVersionEnum version;
 
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
     private WidgetTypeEnum type;
+
+    @Column(name = "version")
+    @Enumerated(EnumType.STRING)
+    private GWVersionEnum version;
 
     @Column(name = "migrate")
     private boolean migrate;
@@ -36,5 +36,19 @@ public class WidgetTypeEntity extends BaseEntity {
     @Column(name = "find_by")
     @Enumerated(EnumType.STRING)
     private WidgetHowFindEnum findBy;
+
+    public WidgetTypeEntity(WidgetTypeEnum type, GWVersionEnum version) {
+        this.type = type;
+        this.version = version;
+        this.migrate = false;
+        this.prefix = WidgetPrefixEnum.TXT;
+        this.findBy = WidgetHowFindEnum.ID;
+
+    }
+
+    public String getRenderIDJoinerChar() {
+        return version.getRenderIDCharJoiner();
+
+    }
 
 }

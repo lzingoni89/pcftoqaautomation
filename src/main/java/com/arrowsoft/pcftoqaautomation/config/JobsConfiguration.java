@@ -10,8 +10,10 @@ import org.springframework.context.annotation.Configuration;
 public class JobsConfiguration {
 
     public JobsConfiguration(JobRegistry jobRegistry,
-                             Job adminLoaderJob) throws DuplicateJobException {
+                             Job adminLoaderJob,
+                             Job importPCFJob) throws DuplicateJobException {
         jobRegistry.register(new ReferenceJobFactory(adminLoaderJob));
+        jobRegistry.register(new ReferenceJobFactory(importPCFJob));
 
     }
 

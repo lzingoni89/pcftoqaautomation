@@ -1,19 +1,20 @@
 package com.arrowsoft.pcftoqaautomation.entity;
 
 import com.arrowsoft.pcftoqaautomation.entity.base.BaseEntity;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.w3c.dom.Element;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
 @Table(name = "gw_widget")
-@EqualsAndHashCode(callSuper = true)
 public class WidgetEntity extends BaseEntity {
 
     @Column(name = "widget_pcf_id")
@@ -37,26 +38,21 @@ public class WidgetEntity extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private WidgetEntity parent;
 
-    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
-    private Set<WidgetEntity> children;
+    @Transient
+    private Set<WidgetEntity> children = new HashSet<>();
 
-    public WidgetEntity(PCFEntity pcf, WidgetTypeEntity widgetType, Element widgetElement) {
-        this.pcf = pcf;
-        this.widgetType = widgetType;
-        this.widgetPCFID = widgetElement.getAttribute("id");
-        this.refPCF = widgetElement.getAttribute("def");
-        this.renderID = this.widgetPCFID;
-
-    }
+    @Transient
+    private boolean newOrUpdated;
 
     public WidgetEntity(PCFEntity pcf, WidgetTypeEntity widgetType, Element widgetElement, WidgetEntity parent) {
         this.pcf = pcf;
         this.widgetType = widgetType;
         this.widgetPCFID = widgetElement.getAttribute("id");
         this.refPCF = widgetElement.getAttribute("def");
+        this.newOrUpdated = true;
         if (parent != null) {
             this.parent = parent;
-            this.renderID = parent.getRenderID() + "-" + this.widgetPCFID;
+            this.renderID = parent.getRenderID() + widgetType.getRenderIDJoinerChar() + this.widgetPCFID;
 
         } else {
             this.renderID = this.widgetPCFID;

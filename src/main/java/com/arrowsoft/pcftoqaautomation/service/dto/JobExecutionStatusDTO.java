@@ -1,4 +1,4 @@
-package com.arrowsoft.pcftoqaautomation.batch.dto;
+package com.arrowsoft.pcftoqaautomation.service.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Data
 @NoArgsConstructor
-public class JobExecutionDTO {
+public class JobExecutionStatusDTO {
 
     private Long id;
     private Long jobId;
@@ -23,9 +23,9 @@ public class JobExecutionDTO {
     private Date lastUpdated;
     private String exitStatusCode;
     private String exitStatusDesc;
-    private Set<StepExecutionDTO> steps;
+    private Set<StepExecutionStatusDTO> steps;
 
-    public JobExecutionDTO(JobExecution jobExecution) {
+    public JobExecutionStatusDTO(JobExecution jobExecution) {
         this.id = jobExecution.getId();
         var job = jobExecution.getJobInstance();
         this.jobId = job.getId();
@@ -40,7 +40,7 @@ public class JobExecutionDTO {
         this.exitStatusDesc = exitStatus.getExitDescription();
         steps = new HashSet<>();
         for (StepExecution step : jobExecution.getStepExecutions()) {
-            steps.add(new StepExecutionDTO(step));
+            steps.add(new StepExecutionStatusDTO(step));
 
         }
 

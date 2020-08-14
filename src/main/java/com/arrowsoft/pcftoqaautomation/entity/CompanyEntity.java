@@ -2,17 +2,17 @@ package com.arrowsoft.pcftoqaautomation.entity;
 
 import com.arrowsoft.pcftoqaautomation.entity.base.BaseEntity;
 import com.arrowsoft.pcftoqaautomation.enums.CompanyEnum;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
-@Data
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
 @Table(name = "gw_company")
-@EqualsAndHashCode(callSuper = true)
 public class CompanyEntity extends BaseEntity {
 
     @Column(name = "cod_namespace")

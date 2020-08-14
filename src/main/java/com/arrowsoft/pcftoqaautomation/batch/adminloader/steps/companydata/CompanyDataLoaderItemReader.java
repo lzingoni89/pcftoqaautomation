@@ -24,11 +24,8 @@ public class CompanyDataLoaderItemReader implements ItemReader<CompanyEnum> {
 
     @Override
     public CompanyEnum read() {
-        if (this.companyList.hasNext()) {
-            return this.companyList.next();
-
-        }
-        return null;
+        return companyList.hasNext() ? companyList.next() : null;
 
     }
+
 }

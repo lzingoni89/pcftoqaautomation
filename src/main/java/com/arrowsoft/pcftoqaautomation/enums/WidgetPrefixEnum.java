@@ -6,6 +6,13 @@ import lombok.Getter;
 public enum WidgetPrefixEnum {
 
     TXT("Txt"),
+    CB("Cb"),
+    CHK("Chk"),
+    GRID("Grid"),
+    TLT("Tlt"),
+    LNK("Lnk"),
+    MSG("Msg"),
+    TAB("Tab"),
     BTN("Btn");
 
     private final String prefix;

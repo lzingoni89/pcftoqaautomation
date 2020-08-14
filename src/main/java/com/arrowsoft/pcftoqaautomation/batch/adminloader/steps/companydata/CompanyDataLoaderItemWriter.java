@@ -21,7 +21,7 @@ public class CompanyDataLoaderItemWriter implements ItemWriter<CompanyEntity> {
 
     @Override
     public void write(List<? extends CompanyEntity> list) {
-        companyRepository.saveAll(list);
+        this.companyRepository.saveAll(list);
 
     }
 }

@@ -1,4 +1,4 @@
-package com.arrowsoft.pcftoqaautomation.batch.dto;
+package com.arrowsoft.pcftoqaautomation.service.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Data
 @NoArgsConstructor
-public class StepExecutionDTO {
+public class StepExecutionStatusDTO {
 
     private String stepName;
     private String status;
@@ -27,7 +27,7 @@ public class StepExecutionDTO {
     private boolean terminateOnly;
     private int filterCount;
 
-    public StepExecutionDTO(StepExecution stepExecution) {
+    public StepExecutionStatusDTO(StepExecution stepExecution) {
         this.stepName = stepExecution.getStepName();
         this.status = stepExecution.getStatus().name();
         this.readCount = stepExecution.getReadCount();
@@ -45,6 +45,7 @@ public class StepExecutionDTO {
         this.exitStatusDesc = exitStatus.getExitDescription();
         this.terminateOnly = stepExecution.isTerminateOnly();
         this.filterCount = stepExecution.getFilterCount();
+
     }
 
 }
