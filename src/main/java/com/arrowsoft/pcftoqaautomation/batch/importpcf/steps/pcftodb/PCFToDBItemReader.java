@@ -2,6 +2,7 @@ package com.arrowsoft.pcftoqaautomation.batch.importpcf.steps.pcftodb;
 
 import com.arrowsoft.pcftoqaautomation.batch.importpcf.steps.dto.ImportPCFBatchTransport;
 import com.arrowsoft.pcftoqaautomation.batch.importpcf.util.ImportPCFBathUtil;
+import com.arrowsoft.pcftoqaautomation.batch.shared.SharedBatchUtil;
 import com.arrowsoft.pcftoqaautomation.entity.ProjectEntity;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.batch.core.StepExecution;
@@ -17,16 +18,19 @@ import java.util.Iterator;
 public class PCFToDBItemReader implements ItemReader<ImportPCFBatchTransport> {
 
     private final ImportPCFBathUtil importPCFBathUtil;
+    private final SharedBatchUtil sharedBatchUtil;
     private Iterator<File> files;
     private ProjectEntity project;
 
-    public PCFToDBItemReader(ImportPCFBathUtil importPCFBathUtil) {
+    public PCFToDBItemReader(ImportPCFBathUtil importPCFBathUtil,
+                             SharedBatchUtil sharedBatchUtil) {
         this.importPCFBathUtil = importPCFBathUtil;
+        this.sharedBatchUtil = sharedBatchUtil;
     }
 
     @BeforeStep
     public void before(StepExecution stepExecution) {
-        this.project = importPCFBathUtil.getProject(stepExecution);
+        this.project = sharedBatchUtil.getProject(stepExecution);
         this.files = importPCFBathUtil.getPCFFiles(this.project);
 
     }

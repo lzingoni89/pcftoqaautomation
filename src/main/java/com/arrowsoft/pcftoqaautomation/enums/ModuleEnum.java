@@ -5,15 +5,17 @@ import lombok.Getter;
 @Getter
 public enum ModuleEnum {
 
-    CC("Claim Center"),
-    BC("Billing Center"),
-    PC("Policy Center"),
-    AB("Contact Manager");
+    CC("Claim Center", "ClaimCenter"),
+    BC("Billing Center", "BillingCenter"),
+    PC("Policy Center", "PolicyCenter"),
+    AB("Contact Manager", "ContactManager");
 
     private final String desc;
+    private final String codNamespace;
 
-    ModuleEnum(String desc) {
+    ModuleEnum(String desc, String codNamespace) {
         this.desc = desc;
+        this.codNamespace = codNamespace;
     }
 
 }

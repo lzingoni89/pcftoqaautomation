@@ -17,7 +17,7 @@ import javax.persistence.*;
 public class ProjectEntity extends BaseEntity {
 
     @JoinColumn(name = "company_id")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private CompanyEntity company;
 
     @Column(name = "module")

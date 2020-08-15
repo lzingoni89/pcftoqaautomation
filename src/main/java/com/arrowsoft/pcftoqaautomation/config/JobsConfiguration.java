@@ -11,9 +11,11 @@ public class JobsConfiguration {
 
     public JobsConfiguration(JobRegistry jobRegistry,
                              Job adminLoaderJob,
-                             Job importPCFJob) throws DuplicateJobException {
+                             Job importPCFJob,
+                             Job generateQAFilesJob) throws DuplicateJobException {
         jobRegistry.register(new ReferenceJobFactory(adminLoaderJob));
         jobRegistry.register(new ReferenceJobFactory(importPCFJob));
+        jobRegistry.register(new ReferenceJobFactory(generateQAFilesJob));
 
     }
 

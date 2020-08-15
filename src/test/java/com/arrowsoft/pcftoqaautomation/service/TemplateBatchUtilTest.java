@@ -1,5 +1,6 @@
 package com.arrowsoft.pcftoqaautomation.service;
 
+import com.arrowsoft.pcftoqaautomation.batch.shared.TemplateBatchUtil;
 import freemarker.template.TemplateException;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -14,15 +15,15 @@ import java.io.IOException;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @ActiveProfiles(profiles = {"test"})
-class TemplateServiceTest {
+class TemplateBatchUtilTest {
 
     @Autowired
-    private TemplateService templateService;
+    private TemplateBatchUtil templateBatchUtil;
 
     @Test
     void useTemplate() throws IOException, TemplateException {
-        templateService.useTemplate();
-        Assert.isTrue(templateService != null, "Es true locoooooooo");
+        templateBatchUtil.useTemplate();
+        Assert.isTrue(templateBatchUtil != null, "Es true locoooooooo");
 
     }
 

@@ -2,17 +2,14 @@ package com.arrowsoft.pcftoqaautomation.batch.importpcf.util;
 
 import com.arrowsoft.pcftoqaautomation.batch.importpcf.steps.dto.ImportPCFBatchTransport;
 import com.arrowsoft.pcftoqaautomation.batch.shared.SharedBatchMsg;
-import com.arrowsoft.pcftoqaautomation.batch.shared.SharedBatchParameterCodes;
 import com.arrowsoft.pcftoqaautomation.entity.*;
-import com.arrowsoft.pcftoqaautomation.enums.CompanyEnum;
-import com.arrowsoft.pcftoqaautomation.enums.GWVersionEnum;
-import com.arrowsoft.pcftoqaautomation.enums.ModuleEnum;
 import com.arrowsoft.pcftoqaautomation.enums.WidgetTypeEnum;
-import com.arrowsoft.pcftoqaautomation.repository.*;
+import com.arrowsoft.pcftoqaautomation.repository.EnumRepository;
+import com.arrowsoft.pcftoqaautomation.repository.PCFRepository;
+import com.arrowsoft.pcftoqaautomation.repository.WidgetRepository;
+import com.arrowsoft.pcftoqaautomation.repository.WidgetTypeRepository;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.batch.core.StepExecution;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -25,54 +22,25 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.StringJoiner;
 
 
 @Log4j2
 @Component
 public class ImportPCFBathUtil {
 
-    private final CompanyRepository companyRepository;
-    private final ProjectRepository projectRepository;
     private final WidgetTypeRepository widgetTypeRepository;
     private final PCFRepository pcfRepository;
     private final WidgetRepository widgetRepository;
     private final EnumRepository enumRepository;
 
-    public ImportPCFBathUtil(CompanyRepository companyRepository,
-                             ProjectRepository projectRepository,
-                             WidgetTypeRepository widgetTypeRepository,
+    public ImportPCFBathUtil(WidgetTypeRepository widgetTypeRepository,
                              PCFRepository pcfRepository,
                              WidgetRepository widgetRepository,
                              EnumRepository enumRepository) {
-        this.companyRepository = companyRepository;
-        this.projectRepository = projectRepository;
         this.widgetTypeRepository = widgetTypeRepository;
         this.pcfRepository = pcfRepository;
         this.widgetRepository = widgetRepository;
         this.enumRepository = enumRepository;
-
-    }
-
-    public ProjectEntity getProject(StepExecution stepExecution) {
-        var parameters = stepExecution.getJobParameters();
-        if (log.isDebugEnabled()) {
-            log.debug("---Parameters---");
-            log.debug("Company: " + parameters.getString(SharedBatchParameterCodes.COMPANY_CODE));
-            log.debug("Module: " + parameters.getString(SharedBatchParameterCodes.MODULE_CODE));
-            log.debug("Version: " + parameters.getString(SharedBatchParameterCodes.VERSION_CODE));
-
-        }
-        var companyCode = CompanyEnum.valueOf(parameters.getString(SharedBatchParameterCodes.COMPANY_CODE));
-        var company = companyRepository.findFirstByCompanyCodIntern(companyCode);
-        if (company == null) {
-            log.error(SharedBatchMsg.ERROR_COMPANY_NOT_FOUND);
-            return null;
-
-        }
-        var module = ModuleEnum.valueOf(parameters.getString(SharedBatchParameterCodes.MODULE_CODE));
-        var version = GWVersionEnum.valueOf(parameters.getString(SharedBatchParameterCodes.VERSION_CODE));
-        return projectRepository.findFirstByCompanyAndModuleAndVersion(company, module, version);
 
     }
 
@@ -135,7 +103,7 @@ public class ImportPCFBathUtil {
         var project = importPcfBatchTransport.getProject();
         var enumEntity = enumRepository.findFirstByProjectAndFileNameAndEditable(project, file.getName(), false);
         var value = getValuesFromTypeCodeFile(file);
-        if(enumEntity == null) {
+        if (enumEntity == null) {
             enumEntity = new EnumEntity(project, getTypeCodeFileName(file), file.getName(), value);
 
         } else {
@@ -143,7 +111,7 @@ public class ImportPCFBathUtil {
 
         }
 
-        if(!enumEntity.isNewOrUpdated()) {
+        if (!enumEntity.isNewOrUpdated()) {
             return null;
 
         }
