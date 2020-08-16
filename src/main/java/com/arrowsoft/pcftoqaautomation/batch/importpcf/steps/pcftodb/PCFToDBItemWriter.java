@@ -11,7 +11,7 @@ import java.util.List;
 
 @Log4j2
 @Component
-public class PCFToDBItemWriter  implements ItemWriter<PCFEntity> {
+public class PCFToDBItemWriter implements ItemWriter<PCFEntity> {
 
     private final PCFRepository pcfRepository;
     private final WidgetRepository widgetRepository;
@@ -24,15 +24,12 @@ public class PCFToDBItemWriter  implements ItemWriter<PCFEntity> {
     @Override
     public void write(List<? extends PCFEntity> list) {
 
-        for(PCFEntity pcf : list) {
-            if(pcf.getWidgets().isEmpty()) {
+        for (PCFEntity pcf : list) {
+            if (pcf.getWidgets().isEmpty()) {
                 continue;
 
             }
-            if(pcf.isNewPCF()) {
-                pcf = pcfRepository.saveAndFlush(pcf);
-
-            }
+            pcf = pcfRepository.saveAndFlush(pcf);
             widgetRepository.saveAll(pcf.getWidgets());
 
         }

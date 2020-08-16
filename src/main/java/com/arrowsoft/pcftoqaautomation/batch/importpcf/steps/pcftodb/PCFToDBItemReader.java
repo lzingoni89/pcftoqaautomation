@@ -30,7 +30,7 @@ public class PCFToDBItemReader implements ItemReader<ImportPCFBatchTransport> {
 
     @BeforeStep
     public void before(StepExecution stepExecution) {
-        this.project = sharedBatchUtil.getProject(stepExecution);
+        this.project = sharedBatchUtil.getProject(stepExecution.getJobParameters());
         this.files = importPCFBathUtil.getPCFFiles(this.project);
 
     }

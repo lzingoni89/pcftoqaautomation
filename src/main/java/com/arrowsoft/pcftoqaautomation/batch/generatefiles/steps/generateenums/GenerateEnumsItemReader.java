@@ -29,7 +29,7 @@ public class GenerateEnumsItemReader implements ItemReader<GenerateEnumsTranspor
 
     @BeforeStep
     public void before(StepExecution stepExecution) {
-        this.project = sharedBatchUtil.getProject(stepExecution);
+        this.project = sharedBatchUtil.getProject(stepExecution.getJobParameters());
         this.enumNames = enumRepository.findEnumNamesByProject(project).iterator();
 
     }

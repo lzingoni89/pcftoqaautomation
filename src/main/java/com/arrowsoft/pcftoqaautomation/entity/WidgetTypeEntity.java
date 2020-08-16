@@ -40,7 +40,7 @@ public class WidgetTypeEntity extends BaseEntity {
     public WidgetTypeEntity(WidgetTypeEnum type, GWVersionEnum version) {
         this.type = type;
         this.version = version;
-        this.migrate = false;
+        this.migrate = true;
         this.prefix = WidgetPrefixEnum.TXT;
         this.findBy = WidgetHowFindEnum.ID;
 

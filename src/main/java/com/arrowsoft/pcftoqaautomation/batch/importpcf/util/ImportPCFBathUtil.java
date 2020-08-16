@@ -5,9 +5,6 @@ import com.arrowsoft.pcftoqaautomation.batch.shared.SharedBatchMsg;
 import com.arrowsoft.pcftoqaautomation.entity.*;
 import com.arrowsoft.pcftoqaautomation.enums.WidgetTypeEnum;
 import com.arrowsoft.pcftoqaautomation.repository.EnumRepository;
-import com.arrowsoft.pcftoqaautomation.repository.PCFRepository;
-import com.arrowsoft.pcftoqaautomation.repository.WidgetRepository;
-import com.arrowsoft.pcftoqaautomation.repository.WidgetTypeRepository;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Component;
@@ -28,20 +25,10 @@ import java.util.Set;
 @Component
 public class ImportPCFBathUtil {
 
-    private final WidgetTypeRepository widgetTypeRepository;
-    private final PCFRepository pcfRepository;
-    private final WidgetRepository widgetRepository;
     private final EnumRepository enumRepository;
 
-    public ImportPCFBathUtil(WidgetTypeRepository widgetTypeRepository,
-                             PCFRepository pcfRepository,
-                             WidgetRepository widgetRepository,
-                             EnumRepository enumRepository) {
-        this.widgetTypeRepository = widgetTypeRepository;
-        this.pcfRepository = pcfRepository;
-        this.widgetRepository = widgetRepository;
+    public ImportPCFBathUtil(EnumRepository enumRepository) {
         this.enumRepository = enumRepository;
-
     }
 
     public Iterator<File> getPCFFiles(ProjectEntity project) {
@@ -74,15 +61,11 @@ public class ImportPCFBathUtil {
         return FileUtils.iterateFiles(rootFolder, extensionFiles, true);
     }
 
-    public PCFEntity createPCFEntity(ImportPCFBatchTransport importPcfBatchTransport) throws IOException, SAXException, ParserConfigurationException {
+    public PCFEntity createPCFEntity(ImportPCFBatchTransport importPcfBatchTransport,
+                                     Set<WidgetTypeEntity> widgetTypeSet) throws IOException, SAXException, ParserConfigurationException {
         var file = importPcfBatchTransport.getFile();
         var project = importPcfBatchTransport.getProject();
-        var pcf = pcfRepository.findFirstByProjectAndPcfFileName(project, file.getName());
-        if (pcf == null) {
-            pcf = new PCFEntity(project, getPCFFileName(file), getRelativeFilePath(file), file.getName());
-
-        }
-        var widgetTypeSet = widgetTypeRepository.findAllByVersionAndMigrate(project.getVersion(), true);
+        var pcf = new PCFEntity(project, getFileName(file), getRelativeFilePath(file), file.getName());
         var containerElement = getContainerElementFromFile(file);
         if (containerElement == null) {
             log.info(SharedBatchMsg.ERROR_CONTAINER_ELEMENT_NOT_FOUND);
@@ -101,33 +84,13 @@ public class ImportPCFBathUtil {
     public EnumEntity createEnumEntity(ImportPCFBatchTransport importPcfBatchTransport) throws ParserConfigurationException, SAXException, IOException {
         var file = importPcfBatchTransport.getFile();
         var project = importPcfBatchTransport.getProject();
-        var enumEntity = enumRepository.findFirstByProjectAndFileNameAndEditable(project, file.getName(), false);
         var value = getValuesFromTypeCodeFile(file);
-        if (enumEntity == null) {
-            enumEntity = new EnumEntity(project, getTypeCodeFileName(file), file.getName(), value);
-
-        } else {
-            enumEntity.setNewValues(value);
-
-        }
-
-        if (!enumEntity.isNewOrUpdated()) {
-            return null;
-
-        }
-        return enumEntity;
+        return new EnumEntity(project, getFileName(file), file.getName(), value);
 
     }
 
-    private String getPCFFileName(File file) {
-        var extensionIndex = file.getName().indexOf(".pcf");
-        return file.getName().substring(0, extensionIndex);
-
-    }
-
-    private String getTypeCodeFileName(File file) {
-        var extensionIndex = file.getName().indexOf(".");
-        return file.getName().substring(0, extensionIndex);
+    private String getFileName(File file) {
+        return file.getName().split("\\.")[0];
 
     }
 
@@ -138,31 +101,18 @@ public class ImportPCFBathUtil {
     }
 
     private WidgetEntity createWidget(PCFEntity pcf, Set<WidgetTypeEntity> widgetTypeSet, Element element, WidgetEntity parent) {
-        var widgetPCFID = element.getAttribute("id");
-        if (widgetPCFID == null || widgetPCFID.isBlank()) {
-            return null;
-        }
         var widgetType = getWidgetTypeEntity(widgetTypeSet, WidgetTypeEnum.valueOf(element.getTagName()));
         if (widgetType == null) {
+            log.error("Widget type not found: " + element.getTagName());
             return null;
-        }
-        WidgetEntity widgetEntity = null;
-        if (!pcf.isNewPCF()) {
-            widgetEntity = widgetRepository.findFirstByPcfAndWidgetTypeAndWidgetPCFID(pcf, widgetType, widgetPCFID);
 
         }
-        if (widgetEntity == null) {
-            widgetEntity = new WidgetEntity(pcf, widgetType, element, parent);
-
-        } else if (parent != null && widgetEntity.getParent() != null && !widgetEntity.getParent().equals(parent)) {
-            widgetEntity.setParent(parent);
-            widgetEntity.setNewOrUpdated(true);
+        var widgetEntity = new WidgetEntity(pcf, widgetType, element, parent);
+        if(widgetEntity.isNeedCustomEnum() && !this.enumRepository.existsByProjectAndName(pcf.getProject(), widgetEntity.getEnumRef())) {
+            this.enumRepository.saveAndFlush(new EnumEntity(pcf.getProject(), widgetEntity.getEnumRef(), widgetEntity.getEnumRef(), null, true));
 
         }
-        if (widgetEntity.isNewOrUpdated()) {
-            pcf.getWidgets().add(widgetEntity);
-
-        }
+        pcf.getWidgets().add(widgetEntity);
         return widgetEntity;
 
     }

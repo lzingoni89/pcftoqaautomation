@@ -1,8 +1,8 @@
-namespace ${enum.companyNamespace}.${enum.moduleNamespace}
+namespace ${companyNamespace}.${moduleNamespace}
 {
-    public enum ${enum.enumName}Enum
+    public enum ${enumName}Enum
     {
-<#list enum.values as value>
+<#list values as value>
         ${value},
 </#list>
     }

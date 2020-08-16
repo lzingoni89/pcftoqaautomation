@@ -53,25 +53,13 @@ public class EnumEntity extends BaseEntity {
         this.name = name;
         this.fileName = fileName;
         this.value = value != null ? getValueJoined(value) : "";
-        this.editable = false;
-        this.newOrUpdated = true;
         this.editable = editable;
+        this.newOrUpdated = true;
 
     }
 
     private String getValueJoined(Set<String> value) {
         return value.stream().sorted().reduce((partialString, element) -> partialString + JOINER_CHAR + element).orElse("");
-
-    }
-
-    public void setNewValues(Set<String> value) {
-        var newValueJoined = value != null ? getValueJoined(value) : "";
-        if (this.value.equals(newValueJoined)) {
-            return;
-
-        }
-        this.value = newValueJoined;
-        this.newOrUpdated = true;
 
     }
 

@@ -23,7 +23,7 @@ public class PCFEntity extends BaseEntity {
     @Column(name = "pcf_name")
     private String pcfName;
 
-    @Column(name = "pcf_folder_path")
+    @Column(name = "pcf_file_path")
     private String pcfFilePath;
 
     @Column(name = "pcf_file_name")

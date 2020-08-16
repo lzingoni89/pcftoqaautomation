@@ -1,6 +1,6 @@
-package com.arrowsoft.pcftoqaautomation.batch.generatefiles.steps.generateenums;
+package com.arrowsoft.pcftoqaautomation.batch.generatefiles.steps.generateqafiles;
 
-import com.arrowsoft.pcftoqaautomation.batch.generatefiles.steps.generateenums.dto.GenerateEnumsTransport;
+import com.arrowsoft.pcftoqaautomation.batch.generatefiles.steps.generateqafiles.dto.GenerateQAFilesTransport;
 import com.arrowsoft.pcftoqaautomation.batch.shared.SharedBatchUtil;
 import com.arrowsoft.pcftoqaautomation.batch.shared.TemplateBatchUtil;
 import com.arrowsoft.pcftoqaautomation.entity.ProjectEntity;
@@ -15,16 +15,16 @@ import java.util.List;
 
 @Log4j2
 @Component
-public class GenerateEnumsItemWriter implements ItemWriter<GenerateEnumsTransport> {
+public class GenerateQAFilesItemWriter implements ItemWriter<GenerateQAFilesTransport> {
 
     private final TemplateBatchUtil templateBatchUtil;
     private final SharedBatchUtil sharedBatchUtil;
     private ProjectEntity project;
 
-    public GenerateEnumsItemWriter(TemplateBatchUtil templateBatchUtil,
-                                   SharedBatchUtil sharedBatchUtil) {
+    public GenerateQAFilesItemWriter(TemplateBatchUtil templateBatchUtil, SharedBatchUtil sharedBatchUtil) {
         this.templateBatchUtil = templateBatchUtil;
         this.sharedBatchUtil = sharedBatchUtil;
+
     }
 
     @BeforeStep
@@ -34,9 +34,10 @@ public class GenerateEnumsItemWriter implements ItemWriter<GenerateEnumsTranspor
     }
 
     @Override
-    public void write(List<? extends GenerateEnumsTransport> list) throws IOException {
-        this.templateBatchUtil.generateEnumFiles(project, list);
+    public void write(List<? extends GenerateQAFilesTransport> list) throws IOException {
+        this.templateBatchUtil.generateQAFiles(project, list);
 
     }
+
 
 }

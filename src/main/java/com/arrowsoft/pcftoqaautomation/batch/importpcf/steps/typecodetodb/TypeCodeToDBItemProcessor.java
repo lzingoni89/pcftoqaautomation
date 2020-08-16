@@ -4,12 +4,16 @@ import com.arrowsoft.pcftoqaautomation.batch.importpcf.steps.dto.ImportPCFBatchT
 import com.arrowsoft.pcftoqaautomation.batch.importpcf.util.ImportPCFBathUtil;
 import com.arrowsoft.pcftoqaautomation.entity.EnumEntity;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Log4j2
 @Component
@@ -26,4 +30,5 @@ public class TypeCodeToDBItemProcessor implements ItemProcessor<ImportPCFBatchTr
         return this.importPCFBathUtil.createEnumEntity(importPCFBatchTransport);
 
     }
+
 }

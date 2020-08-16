@@ -32,7 +32,7 @@ public class TypeCodeToDBItemReader implements ItemReader<ImportPCFBatchTranspor
 
     @BeforeStep
     public void before(StepExecution stepExecution) {
-        this.project = sharedBatchUtil.getProject(stepExecution);
+        this.project = sharedBatchUtil.getProject(stepExecution.getJobParameters());
         switch (stepExecution.getStepName()) {
             case ImportPCFBatchConst.TYPECODE_METADATA_IMPORT_STEP:
                 this.files = importPCFBathUtil.getTypeCodeMetadataFiles(this.project);

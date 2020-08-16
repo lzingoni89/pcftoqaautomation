@@ -10,6 +10,7 @@ public class ImportPCFBatchConst {
     public static final String TYPECODE_METADATA_IMPORT_STEP = "TypeCodeToDBBatchMetadataStep";
     public static final String TYPECODE_EXTENSION_IMPORT_STEP = "TypeCodeToDBBatchExtensionStep";
     public static final String GENERATE_ENUMS_STEP = "GenerateEnumsStep";
+    public static final String GENERATE_QA_STEP = "GenerateQAStep";
 
     public static final String PCF_PATH = ROOT_CONFIG_PATH + "web" + File.separator + "pcf";
     public static final String TYPECODE_METADATA_PATH = ROOT_CONFIG_PATH + "metadata" + File.separator + "typelist";
