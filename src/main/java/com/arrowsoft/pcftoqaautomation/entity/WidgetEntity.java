@@ -99,8 +99,14 @@ public class WidgetEntity extends BaseEntity {
             this.widgetPCFID = this.widgetPCFID.isBlank() ? this.parent.getWidgetPCFID() + "_" + widgetElement.getAttribute("location").split("\\(")[0] : this.widgetPCFID;
             var grandParent = this.parent.parent;
             this.renderID = grandParent != null ? grandParent.renderID + widgetType.getRenderIDJoinerChar() + this.widgetPCFID : this.widgetPCFID;
+            this.widgetPCFID = this.widgetPCFID.replace("_", "");
 
         }
+
+    }
+
+    public String getParentRenderID() {
+        return this.renderID.substring(0, this.renderID.lastIndexOf(this.widgetType.getRenderIDJoinerChar()));
 
     }
 

@@ -13,6 +13,7 @@ public enum WidgetPrefixEnum {
     LNK("Lnk"),
     MSG("Msg"),
     TAB("Tab"),
+    LOC("Loc"),
     BTN("Btn");
 
     private final String prefix;
