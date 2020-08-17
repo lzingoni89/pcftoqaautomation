@@ -190,7 +190,7 @@ public class TemplateBatchUtil {
                 continue;
 
             }
-            var dto = new WidgetTemplateDTO(widgetEntity, refRenderID);
+            var dto = new WidgetTemplateDTO(widgetEntity, refRenderID, widgetDTOs);
             if (!dto.getWidgetPCFID().isBlank() && widgetTypesAllowed.contains(widgetEntity.getWidgetType())) {
                 widgetIDs.add(widgetID);
                 widgetDTOs.add(dto);
