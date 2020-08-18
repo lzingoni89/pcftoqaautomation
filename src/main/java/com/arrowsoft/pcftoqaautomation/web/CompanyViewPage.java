@@ -3,14 +3,16 @@ package com.arrowsoft.pcftoqaautomation.web;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 
-@Route(value = "Companies", layout = MainLayout.class)
+@Route(value = "company", layout = MainLayout.class)
 @RouteAlias(value = "", layout = MainLayout.class)
-public class CompaniesViewPage extends VerticalLayout {
+@PageTitle("Company | Guidewire ETL")
+public class CompanyViewPage extends VerticalLayout {
 
-    public CompaniesViewPage() {
+    public CompanyViewPage() {
         var form = new FormLayout();
         var titleField = new TextField();
         titleField.setLabel("Title");
