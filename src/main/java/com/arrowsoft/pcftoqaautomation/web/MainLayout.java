@@ -2,10 +2,12 @@ package com.arrowsoft.pcftoqaautomation.web;
 
 import com.arrowsoft.pcftoqaautomation.service.CompanyService;
 import com.arrowsoft.pcftoqaautomation.service.dto.CompanyDTO;
+import com.arrowsoft.pcftoqaautomation.web.company.CompanyViewPage;
+import com.arrowsoft.pcftoqaautomation.web.setup.SetupViewPage;
 import com.arrowsoft.pcftoqaautomation.web.util.MessagesDisplaySource;
+import com.arrowsoft.pcftoqaautomation.web.widget.WidgetsViewPage;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
-import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
@@ -68,8 +70,9 @@ public class MainLayout extends AppLayout implements RouterLayout {
     private void populateDrawer() {
         drawerTabs.removeAll();
         if (companyTab.isSelected()) {
+            drawerTabs.add(new Tab(new RouterLink("Summary", CompanyViewPage.class)));
             for (CompanyDTO company : companyService.getCompanyList()) {
-                drawerTabs.add(new Tab(company.getName()));
+                drawerTabs.add(new Tab(new RouterLink(company.getName(), CompanyViewPage.class, company.getId().toString())));
 
             }
 

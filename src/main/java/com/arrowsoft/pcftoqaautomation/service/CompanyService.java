@@ -23,4 +23,9 @@ public class CompanyService {
 
     }
 
+    public CompanyDTO findCompanyByID(String id) {
+        return this.companyRepository.findById(Long.parseLong(id)).map(CompanyDTO::new).orElse(null);
+
+    }
+
 }

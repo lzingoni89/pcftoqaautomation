@@ -22,8 +22,9 @@ public class TemplateBatchUtil {
 
     private static final String FOLDER_TEMPLATE = "templates";
 
-    private static final String FOLDER_ENUM = "Enums";
     private static final String ENUM_TEMPLATE = "Enum_Template.ftlh";
+    private static final String FOLDER_ENUM = "Enums";
+    private static final String SUFIX_ENUM = "Enum";
 
     private static final String ELEMENT_TEMPLATE = "Element_Template.ftlh";
     private static final String FOLDER_ELEMENT = "Elements";
@@ -125,7 +126,7 @@ public class TemplateBatchUtil {
     private OutputStreamWriter createEnumFile(String enumFolderPath, String enumName) throws FileNotFoundException {
         var pathJoiner = new StringJoiner(File.separator);
         pathJoiner.add(enumFolderPath);
-        pathJoiner.add(enumName + CSHARP_EXTENSION);
+        pathJoiner.add(enumName + SUFIX_ENUM + CSHARP_EXTENSION);
         return new OutputStreamWriter(new FileOutputStream(pathJoiner.toString()));
 
     }

@@ -1,5 +1,6 @@
-package com.arrowsoft.pcftoqaautomation.web;
+package com.arrowsoft.pcftoqaautomation.web.widget;
 
+import com.arrowsoft.pcftoqaautomation.web.MainLayout;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
