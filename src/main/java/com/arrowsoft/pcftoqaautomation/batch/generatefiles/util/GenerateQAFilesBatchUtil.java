@@ -48,11 +48,7 @@ public class GenerateQAFilesBatchUtil {
     }
 
     public GenerateQAFilesTransport populateWidgetsTransport(GenerateQAFilesTransport transport) {
-        var widgets = this.widgetRepository.findByPcfNameOrderByWidgetPCFID(transport.getPcfName());
-        if (widgets == null || widgets.isEmpty()) {
-            return null;
-        }
-        transport.setWidgets(widgets);
+        transport.setWidgets(this.widgetRepository.findByPcfNameAndPcfPathOrderById(transport.getPcfName(), transport.getPcfPath()));
         return transport;
 
     }

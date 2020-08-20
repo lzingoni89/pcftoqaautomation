@@ -4,6 +4,7 @@ import com.arrowsoft.pcftoqaautomation.entity.base.BaseEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.w3c.dom.Element;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -26,8 +27,15 @@ public class PCFEntity extends BaseEntity {
     @Column(name = "pcf_file_path")
     private String pcfFilePath;
 
-    @Column(name = "pcf_file_name")
-    private String pcfFileName;
+    @Column(name = "menu_action_ref")
+    private String menuActionRef;
+
+    @Column(name = "mode")
+    private String mode;
+
+    @JoinColumn(name = "pcf_type_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private WidgetTypeEntity pcfType;
 
     @Transient
     private Set<WidgetEntity> widgets = new HashSet<>();
@@ -38,11 +46,14 @@ public class PCFEntity extends BaseEntity {
     public PCFEntity(ProjectEntity project,
                      String pcfName,
                      String pcfFilePath,
-                     String pcfFileName) {
+                     WidgetTypeEntity pcfType,
+                     Element containerElement) {
         this.project = project;
         this.pcfName = pcfName;
         this.pcfFilePath = pcfFilePath;
-        this.pcfFileName = pcfFileName;
+        this.menuActionRef = containerElement.getAttribute("menuActions").split("\\(")[0];
+        this.mode = containerElement.getAttribute("mode");
+        this.pcfType = pcfType;
         this.newPCF = true;
 
     }

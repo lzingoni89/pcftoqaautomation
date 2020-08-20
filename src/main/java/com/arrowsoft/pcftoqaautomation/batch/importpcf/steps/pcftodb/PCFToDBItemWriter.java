@@ -25,10 +25,6 @@ public class PCFToDBItemWriter implements ItemWriter<PCFEntity> {
     public void write(List<? extends PCFEntity> list) {
 
         for (PCFEntity pcf : list) {
-            if (pcf.getWidgets().isEmpty()) {
-                continue;
-
-            }
             pcf = pcfRepository.saveAndFlush(pcf);
             widgetRepository.saveAll(pcf.getWidgets());
 

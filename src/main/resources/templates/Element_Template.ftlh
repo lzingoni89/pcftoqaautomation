@@ -6,7 +6,7 @@ namespace ${companyNamespace}.${moduleNamespace}
 {
     public class ${pcfName}Elements : IPageElements
     {
-        [FindsBy(How = How.Id, Using = "${pcfName}")]
+        [FindsBy(How = How.Id, Using = "${pcfName}${locationGroup}")]
         public IWebElement ${pcfName}Screen { get; set; }
 
 <#list widgets as widget>

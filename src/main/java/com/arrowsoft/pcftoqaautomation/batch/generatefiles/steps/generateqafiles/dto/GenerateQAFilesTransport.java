@@ -12,9 +12,9 @@ public class GenerateQAFilesTransport {
     private final String pcfPath;
     private List<WidgetEntity> widgets;
 
-    public GenerateQAFilesTransport(String[] pcf) {
-        this.pcfName = pcf[0];
-        this.pcfPath = pcf[1];
+    public GenerateQAFilesTransport(Object[] pcf) {
+        this.pcfName = pcf[0].toString();
+        this.pcfPath = pcf[1].toString();
 
     }
 

@@ -6,6 +6,8 @@ import com.arrowsoft.pcftoqaautomation.batch.shared.dto.WidgetTemplateDTO;
 import com.arrowsoft.pcftoqaautomation.entity.ProjectEntity;
 import com.arrowsoft.pcftoqaautomation.entity.WidgetEntity;
 import com.arrowsoft.pcftoqaautomation.entity.WidgetTypeEntity;
+import com.arrowsoft.pcftoqaautomation.enums.WidgetTypeEnum;
+import com.arrowsoft.pcftoqaautomation.repository.PCFRepository;
 import com.arrowsoft.pcftoqaautomation.repository.WidgetRepository;
 import com.arrowsoft.pcftoqaautomation.repository.WidgetTypeRepository;
 import freemarker.template.Configuration;
@@ -35,14 +37,18 @@ public class TemplateBatchUtil {
     private static final String SUFIX_PAGE = "Page";
 
     private static final String CSHARP_EXTENSION = ".cs";
+    private static final String LOCATIONGROUP_RENDERID = "MenuLinks";
 
     private final WidgetRepository widgetRepository;
+    private final PCFRepository pcfRepository;
     private final WidgetTypeRepository widgetTypeRepository;
     private Configuration configuration;
 
     public TemplateBatchUtil(WidgetRepository widgetRepository,
+                             PCFRepository pcfRepository,
                              WidgetTypeRepository widgetTypeRepository) {
         this.widgetRepository = widgetRepository;
+        this.pcfRepository = pcfRepository;
         this.widgetTypeRepository = widgetTypeRepository;
         var classLoader = ClassLoader.getSystemClassLoader().getResource(FOLDER_TEMPLATE);
         if (classLoader == null) {
@@ -73,6 +79,7 @@ public class TemplateBatchUtil {
         var qaElementFolder = getQAElementPathFolder(project);
         var qaPageFolder = getQAPagePathFolder(project);
         var widgetTypesAllowed = this.widgetTypeRepository.findAllByVersionAndMigrate(project.getVersion(), true);
+        var locationGroupType = this.widgetTypeRepository.findFirstByTypeAndVersion(WidgetTypeEnum.LocationGroup, project.getVersion());
         for (GenerateQAFilesTransport transport : list) {
             var pcfName = transport.getPcfName();
             var pcfPath = transport.getPcfPath();
@@ -82,8 +89,24 @@ public class TemplateBatchUtil {
             root.put("companyNamespace", companyNamespace);
             root.put("moduleNamespace", moduleNamespace);
             root.put("pcfName", pcfName);
+            var suffixLocationGroup = "";
             var widgets = new ArrayList<WidgetTemplateDTO>();
-            populateAllWidgets(widgetTypesAllowed, widgets, transport.getWidgets(), "");
+            var refRenderID = pcfName;
+            var renderIDCharJoiner = project.getVersion().getRenderIDCharJoiner();
+            if (this.pcfRepository.existsByProjectAndPcfNameAndPcfFilePathAndPcfType(project, pcfName, pcfPath, locationGroupType)) {
+                var pcf = this.pcfRepository.findFirstByProjectAndPcfNameAndPcfFilePath(project, pcfName, pcfPath);
+                if(!pcf.getMenuActionRef().isBlank()) {
+                    var menuActionWidgets = this.widgetRepository.findByPcfNameOrderById(pcf.getMenuActionRef());
+                    var menuActionRenderID = refRenderID + renderIDCharJoiner + pcf.getMenuActionRef();
+                    populateAllWidgets(renderIDCharJoiner, widgetTypesAllowed, widgets, menuActionWidgets, menuActionRenderID);
+
+                }
+                suffixLocationGroup = renderIDCharJoiner + LOCATIONGROUP_RENDERID;
+                refRenderID = refRenderID + suffixLocationGroup;
+
+            }
+            root.put("locationGroup", suffixLocationGroup);
+            populateAllWidgets(renderIDCharJoiner, widgetTypesAllowed, widgets, transport.getWidgets(), refRenderID);
             root.put("widgets", widgets);
             try (var outElement = createQAFile(fileElementPath, pcfName, SUFIX_ELEMENT);
                  var outPage = createQAFile(filePagePath, pcfName, SUFIX_PAGE)) {
@@ -181,9 +204,11 @@ public class TemplateBatchUtil {
 
     }
 
-    private void populateAllWidgets(Set<WidgetTypeEntity> widgetTypesAllowed,
+    private void populateAllWidgets(String renderIDCharJoiner,
+                                    Set<WidgetTypeEntity> widgetTypesAllowed,
                                     List<WidgetTemplateDTO> widgetDTOs,
-                                    List<WidgetEntity> widgets, String refRenderID) {
+                                    List<WidgetEntity> widgets,
+                                    String refRenderID) {
         var widgetIDs = new HashSet<String>(widgets.size());
         for (WidgetEntity widgetEntity : widgets) {
             var widgetID = widgetEntity.getWidgetPCFID();
@@ -195,19 +220,37 @@ public class TemplateBatchUtil {
             if (!dto.getWidgetPCFID().isBlank() && widgetTypesAllowed.contains(widgetEntity.getWidgetType())) {
                 widgetIDs.add(widgetID);
                 widgetDTOs.add(dto);
-            }
-            var pcfRef = widgetEntity.getPcfRef();
-            if (pcfRef.isBlank()) {
-                continue;
 
             }
-            var refWidgets = this.widgetRepository.findByPcfNameOrderByWidgetPCFID(pcfRef);
+            var refWidgets = readPCFRef(widgetDTOs, dto.getRenderID(), widgetEntity);
             if (refWidgets != null && !refWidgets.isEmpty()) {
-                populateAllWidgets(widgetTypesAllowed, widgetDTOs, refWidgets, dto.getRenderID());
+                populateAllWidgets(renderIDCharJoiner, widgetTypesAllowed, widgetDTOs, refWidgets, dto.getRenderID());
 
             }
 
         }
+
+    }
+
+    private List<WidgetEntity> readPCFRef(List<WidgetTemplateDTO> widgetDTOs,
+                                          String refRenderID,
+                                          WidgetEntity widgetEntity) {
+        var pcfRef = widgetEntity.getPcfRef();
+        if (pcfRef.isBlank()) {
+            return null;
+
+        }
+        var pcf = this.pcfRepository.findFirstByProjectAndPcfName(widgetEntity.getProject(), pcfRef);
+        if(pcf == null) {
+            log.error("PCF Not Found: " + pcfRef);
+            return null;
+        }
+        if (widgetEntity.getWidgetType().getType() == WidgetTypeEnum.LocationRef
+                && pcf.getPcfType().getType() != WidgetTypeEnum.LocationGroup) {
+            return null;
+
+        }
+        return this.widgetRepository.findByPcfNameOrderById(pcfRef);
 
     }
 

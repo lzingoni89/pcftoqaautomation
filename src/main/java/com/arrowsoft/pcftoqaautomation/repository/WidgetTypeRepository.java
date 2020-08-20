@@ -17,4 +17,6 @@ public interface WidgetTypeRepository extends JpaRepository<WidgetTypeEntity, Lo
 
     Set<WidgetTypeEntity> findAllByVersionAndMigrate(GWVersionEnum version, boolean migrate);
 
+    WidgetTypeEntity findFirstByTypeAndVersion(WidgetTypeEnum type, GWVersionEnum version);
+
 }

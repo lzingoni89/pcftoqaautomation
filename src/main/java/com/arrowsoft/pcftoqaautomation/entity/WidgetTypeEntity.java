@@ -2,7 +2,7 @@ package com.arrowsoft.pcftoqaautomation.entity;
 
 import com.arrowsoft.pcftoqaautomation.entity.base.BaseEntity;
 import com.arrowsoft.pcftoqaautomation.enums.GWVersionEnum;
-import com.arrowsoft.pcftoqaautomation.enums.WidgetHowFindEnum;
+import com.arrowsoft.pcftoqaautomation.enums.HowFindEnum;
 import com.arrowsoft.pcftoqaautomation.enums.WidgetPrefixEnum;
 import com.arrowsoft.pcftoqaautomation.enums.WidgetTypeEnum;
 import lombok.Getter;
@@ -35,14 +35,14 @@ public class WidgetTypeEntity extends BaseEntity {
 
     @Column(name = "find_by")
     @Enumerated(EnumType.STRING)
-    private WidgetHowFindEnum findBy;
+    private HowFindEnum findBy;
 
     public WidgetTypeEntity(WidgetTypeEnum type, GWVersionEnum version) {
         this.type = type;
         this.version = version;
         this.migrate = true;
         this.prefix = WidgetPrefixEnum.TXT;
-        this.findBy = WidgetHowFindEnum.ID;
+        this.findBy = HowFindEnum.ID;
 
     }
 

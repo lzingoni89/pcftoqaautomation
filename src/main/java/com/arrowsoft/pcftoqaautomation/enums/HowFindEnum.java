@@ -3,7 +3,7 @@ package com.arrowsoft.pcftoqaautomation.enums;
 import lombok.Getter;
 
 @Getter
-public enum WidgetHowFindEnum {
+public enum HowFindEnum {
 
     ID("Id"),
     NAME("Name"),
@@ -17,7 +17,7 @@ public enum WidgetHowFindEnum {
 
     private final String how;
 
-    WidgetHowFindEnum(String how) {
+    HowFindEnum(String how) {
         this.how = how;
     }
 

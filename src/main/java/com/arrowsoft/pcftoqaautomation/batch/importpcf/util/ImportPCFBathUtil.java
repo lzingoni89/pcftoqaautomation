@@ -65,18 +65,19 @@ public class ImportPCFBathUtil {
                                      Set<WidgetTypeEntity> widgetTypeSet) throws IOException, SAXException, ParserConfigurationException {
         var file = importPcfBatchTransport.getFile();
         var project = importPcfBatchTransport.getProject();
-        var pcf = new PCFEntity(project, getFileName(file), getRelativeFilePath(file), file.getName());
         var containerElement = getContainerElementFromFile(file);
         if (containerElement == null) {
-            log.info(SharedBatchMsg.ERROR_CONTAINER_ELEMENT_NOT_FOUND);
+            log.error(SharedBatchMsg.ERROR_CONTAINER_ELEMENT_NOT_FOUND);
             return null;
         }
-        var widget = createWidget(pcf, widgetTypeSet, containerElement, null);
-        if (widget == null) {
+        var widgetType = getWidgetTypeEntity(widgetTypeSet, WidgetTypeEnum.valueOf(containerElement.getTagName()));
+        if (widgetType == null) {
+            log.error("Widget type not found: " + containerElement.getTagName());
             return null;
 
         }
-        readNodeChildren(pcf, widgetTypeSet, containerElement, widget);
+        var pcf = new PCFEntity(project, getFileName(file), getRelativeFilePath(file), widgetType, containerElement);
+        readNodeChildren(pcf, widgetTypeSet, containerElement, null);
         return pcf;
 
     }
@@ -108,7 +109,7 @@ public class ImportPCFBathUtil {
 
         }
         var widgetEntity = new WidgetEntity(pcf, widgetType, element, parent);
-        if(widgetEntity.isNeedCustomEnum() && !this.enumRepository.existsByProjectAndName(pcf.getProject(), widgetEntity.getEnumRef())) {
+        if (widgetEntity.isNeedCustomEnum() && !this.enumRepository.existsByProjectAndName(pcf.getProject(), widgetEntity.getEnumRef())) {
             this.enumRepository.saveAndFlush(new EnumEntity(pcf.getProject(), widgetEntity.getEnumRef(), widgetEntity.getEnumRef(), null, true));
 
         }
@@ -156,6 +157,7 @@ public class ImportPCFBathUtil {
             var node = childNodes.item(temp);
             if (node.getNodeType() != Node.ELEMENT_NODE) {
                 continue;
+
             }
             var element = (Element) node;
             var widget = createWidget(pcf, widgetTypeSet, element, parentWidget);

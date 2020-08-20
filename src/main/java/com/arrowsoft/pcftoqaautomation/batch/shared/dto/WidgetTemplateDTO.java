@@ -5,6 +5,7 @@ import com.arrowsoft.pcftoqaautomation.entity.WidgetTypeEntity;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.StringJoiner;
 
 @Getter
 public class WidgetTemplateDTO {
@@ -22,14 +23,19 @@ public class WidgetTemplateDTO {
         this.widgetPCFID = widget.getWidgetPCFID();
         this.widgetType = widget.getWidgetType();
         this.enumRef = widget.getEnumRef();
-        this.renderID = refRenderID.isBlank() ? widget.getRenderID() : (refRenderID + widgetType.getRenderIDJoinerChar() + widget.getRenderID());
         this.refRenderID = refRenderID;
-        this.parentVarName = this.setParentVarName(widgetDTOs);
+        var renderIDJoiner = new StringJoiner(this.widgetType.getRenderIDJoinerChar());
+        renderIDJoiner.add(refRenderID);
+        if (!widget.getRenderID().isBlank()) {
+            renderIDJoiner.add(widget.getRenderID());
 
+        }
+        this.renderID = renderIDJoiner.toString();
+        this.parentVarName = this.getParentVarNameFromDTOs(widgetDTOs);
 
     }
 
-    private String setParentVarName(List<WidgetTemplateDTO> widgetDTOs) {
+    private String getParentVarNameFromDTOs(List<WidgetTemplateDTO> widgetDTOs) {
         if (!this.renderID.contains(this.widgetType.getRenderIDJoinerChar())) {
             return "";
 

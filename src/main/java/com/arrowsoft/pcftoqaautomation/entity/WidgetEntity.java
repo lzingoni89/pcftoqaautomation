@@ -34,6 +34,9 @@ public class WidgetEntity extends BaseEntity {
     @Column(name = "pcf_name")
     private String pcfName;
 
+    @Column(name = "pcf_path")
+    private String pcfPath;
+
     @JoinColumn(name = "widget_type_id")
     @ManyToOne(fetch = FetchType.LAZY)
     private WidgetTypeEntity widgetType;
@@ -64,44 +67,86 @@ public class WidgetEntity extends BaseEntity {
         this.pcf = pcf;
         this.project = pcf.getProject();
         this.pcfName = pcf.getPcfName();
+        this.pcfPath = pcf.getPcfFilePath();
         this.widgetType = widgetType;
         this.parent = parent;
         this.widgetPCFID = widgetElement.getAttribute("id");
+        populatePCFRef(widgetElement);
+        populateEnumRef(widgetElement);
+        populateRenderID();
+
+    }
+
+    private void populatePCFRef(Element widgetElement) {
         this.pcfRef = widgetElement.getAttribute("def").split("\\(")[0];
-        if (this.pcfRef.isBlank() && this.widgetType.getType() == WidgetTypeEnum.Tab) {
-            this.pcfRef = widgetElement.getAttribute("action").split(".go\\(")[0];
+        var widgetTypeCode = this.widgetType.getType();
+        switch (widgetTypeCode) {
+            case Tab:
+                this.pcfRef = widgetElement.getAttribute("action").split(".go\\(")[0];
+                break;
+            case LocationRef:
+                this.pcfRef = widgetElement.getAttribute("location").split("\\(")[0];
+                this.widgetPCFID = this.pcfRef;
+                break;
+
+        }
+        if (this.pcfRef.isBlank()) {
+            return;
+
+        }
+        var pcfRefSpl = this.pcfRef.split("\\.");
+        this.pcfRef = pcfRefSpl[pcfRefSpl.length - 1];
+        if (!this.widgetPCFID.isBlank()) {
+            return;
+        }
+        this.widgetPCFID = this.pcfRef;
+
+    }
+
+    private void populateEnumRef(Element widgetElement) {
+        var tempEnumRef = widgetElement.getAttribute("valueType");
+        if (tempEnumRef == null || tempEnumRef.isBlank()) {
+            return;
+
+        }
+        if (tempEnumRef.startsWith("typekey.")) {
+            this.enumRef = tempEnumRef.substring(8);
+            if (!this.enumRef.contains("[")) {
+                return;
+            }
+            this.enumRef = this.enumRef.substring(0, this.enumRef.indexOf("["));
+
+        } else if (!widgetElement.getAttribute("valueRange").isBlank()) {
+            this.enumRef = this.pcfName + (this.widgetPCFID.isBlank() ? "WidgetNotID" : this.widgetPCFID);
+            this.needCustomEnum = true;
 
         }
 
-        var tempEnumRef = widgetElement.getAttribute("valueType");
-        if (tempEnumRef != null) {
-            if (tempEnumRef.startsWith("typekey.")) {
-                this.enumRef = tempEnumRef.substring(8);
+    }
 
-            } else if (!widgetElement.getAttribute("valueRange").isBlank()) {
-                this.enumRef = this.pcfName + (this.widgetPCFID.isBlank() ? "WidgetNotID" : this.widgetPCFID);
-                this.needCustomEnum = true;
+    private void populateRenderID() {
+        var renderIDJoiner = new StringJoiner(widgetType.getRenderIDJoinerChar());
+        if (this.parent != null && !this.parent.getRenderID().isBlank()) {
+            if (this.widgetPCFID.isBlank() && this.widgetType.getType() == WidgetTypeEnum.Toolbar) {
+                renderIDJoiner.add(this.parent.getRenderID() + "_tb");
+
+            } else {
+                renderIDJoiner.add(this.parent.getRenderID());
 
             }
 
         }
-        var renderIDJoiner = new StringJoiner(widgetType.getRenderIDJoinerChar());
-        if (this.parent != null && !this.parent.getRenderID().isBlank()) {
-            renderIDJoiner.add(this.parent.getRenderID());
-
-        }
         if (!this.widgetPCFID.isBlank()) {
-            renderIDJoiner.add(this.widgetPCFID);
+            if (this.widgetType.getType() == WidgetTypeEnum.LocationRef) {
+                renderIDJoiner.add(this.pcfName + "_" + this.widgetPCFID);
+
+            } else {
+                renderIDJoiner.add(this.widgetPCFID);
+
+            }
 
         }
         this.renderID = renderIDJoiner.toString();
-        if (this.widgetType.getType() == WidgetTypeEnum.LocationRef) {
-            this.widgetPCFID = this.widgetPCFID.isBlank() ? this.parent.getWidgetPCFID() + "_" + widgetElement.getAttribute("location").split("\\(")[0] : this.widgetPCFID;
-            var grandParent = this.parent.parent;
-            this.renderID = grandParent != null ? grandParent.renderID + widgetType.getRenderIDJoinerChar() + this.widgetPCFID : this.widgetPCFID;
-            this.widgetPCFID = this.widgetPCFID.replace("_", "");
-
-        }
 
     }
 
