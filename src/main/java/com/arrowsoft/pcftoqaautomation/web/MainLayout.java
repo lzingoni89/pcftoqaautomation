@@ -1,7 +1,7 @@
 package com.arrowsoft.pcftoqaautomation.web;
 
 import com.arrowsoft.pcftoqaautomation.service.CompanyService;
-import com.arrowsoft.pcftoqaautomation.service.dto.CompanyDTO;
+import com.arrowsoft.pcftoqaautomation.service.dto.company.CompanyDTO;
 import com.arrowsoft.pcftoqaautomation.web.company.CompanyViewPage;
 import com.arrowsoft.pcftoqaautomation.web.setup.SetupViewPage;
 import com.arrowsoft.pcftoqaautomation.web.util.MessagesDisplaySource;

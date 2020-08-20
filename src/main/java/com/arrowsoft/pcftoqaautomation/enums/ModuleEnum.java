@@ -2,6 +2,8 @@ package com.arrowsoft.pcftoqaautomation.enums;
 
 import lombok.Getter;
 
+import java.util.Arrays;
+
 @Getter
 public enum ModuleEnum {
 
@@ -16,6 +18,12 @@ public enum ModuleEnum {
     ModuleEnum(String desc, String codNamespace) {
         this.desc = desc;
         this.codNamespace = codNamespace;
+
+    }
+
+    public static ModuleEnum getByDesc(String desc) {
+        return Arrays.stream(values()).filter(moduleEnum -> moduleEnum.desc.equals(desc)).findFirst().orElse(null);
+
     }
 
 }

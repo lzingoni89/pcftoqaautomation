@@ -1,6 +1,6 @@
 package com.arrowsoft.pcftoqaautomation.batch;
 
-import com.arrowsoft.pcftoqaautomation.service.dto.BatchProcessCodeDTO;
+import com.arrowsoft.pcftoqaautomation.service.dto.joblauncher.BatchProcessCodeDTO;
 import lombok.Getter;
 
 import java.util.HashSet;

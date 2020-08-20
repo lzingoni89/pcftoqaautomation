@@ -1,4 +1,4 @@
-package com.arrowsoft.pcftoqaautomation.service.dto;
+package com.arrowsoft.pcftoqaautomation.service.dto.joblauncher;
 
 import com.arrowsoft.pcftoqaautomation.batch.BatchProcessCode;
 import lombok.Data;

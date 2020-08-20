@@ -21,6 +21,9 @@ public class CompanyEntity extends BaseEntity {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "retired")
+    private boolean retired;
+
     @Column(name = "company_cod_intern")
     @Enumerated(EnumType.STRING)
     private CompanyEnum companyCodIntern;
@@ -29,6 +32,7 @@ public class CompanyEntity extends BaseEntity {
         this.codNamespace = companyEnum.getCodNamespace();
         this.name = companyEnum.getName();
         this.companyCodIntern = companyEnum;
+        this.retired = false;
 
     }
 

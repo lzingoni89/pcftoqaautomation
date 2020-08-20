@@ -2,6 +2,8 @@ package com.arrowsoft.pcftoqaautomation.enums;
 
 import lombok.Getter;
 
+import java.util.Arrays;
+
 @Getter
 public enum GWVersionEnum {
 
@@ -16,6 +18,11 @@ public enum GWVersionEnum {
         this.code = code;
         this.desc = desc;
         this.renderIDCharJoiner = renderIDCharJoiner;
+
+    }
+
+    public static GWVersionEnum getByDesc(String desc) {
+        return Arrays.stream(values()).filter(versionEnum -> versionEnum.desc.equals(desc)).findFirst().orElse(null);
 
     }
 

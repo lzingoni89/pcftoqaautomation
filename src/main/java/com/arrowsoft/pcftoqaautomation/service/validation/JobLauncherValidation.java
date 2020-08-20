@@ -2,7 +2,7 @@ package com.arrowsoft.pcftoqaautomation.service.validation;
 
 import com.arrowsoft.pcftoqaautomation.batch.BatchProcessCode;
 import com.arrowsoft.pcftoqaautomation.batch.shared.SharedBatchParameterCodes;
-import com.arrowsoft.pcftoqaautomation.service.dto.BatchExecutionDTO;
+import com.arrowsoft.pcftoqaautomation.service.dto.joblauncher.BatchExecutionDTO;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.explore.JobExplorer;
 import org.springframework.batch.core.launch.NoSuchJobException;

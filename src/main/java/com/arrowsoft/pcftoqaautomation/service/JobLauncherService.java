@@ -1,9 +1,9 @@
 package com.arrowsoft.pcftoqaautomation.service;
 
 import com.arrowsoft.pcftoqaautomation.batch.BatchProcessCode;
-import com.arrowsoft.pcftoqaautomation.service.dto.BatchExecutionDTO;
-import com.arrowsoft.pcftoqaautomation.service.dto.BatchProcessCodeDTO;
-import com.arrowsoft.pcftoqaautomation.service.dto.JobExecutionStatusDTO;
+import com.arrowsoft.pcftoqaautomation.service.dto.joblauncher.BatchExecutionDTO;
+import com.arrowsoft.pcftoqaautomation.service.dto.joblauncher.BatchProcessCodeDTO;
+import com.arrowsoft.pcftoqaautomation.service.dto.joblauncher.JobExecutionStatusDTO;
 import com.arrowsoft.pcftoqaautomation.service.validation.JobLauncherValidation;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.batch.core.JobParametersInvalidException;
