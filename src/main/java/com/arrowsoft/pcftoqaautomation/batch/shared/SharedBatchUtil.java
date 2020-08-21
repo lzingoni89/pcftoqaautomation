@@ -60,6 +60,7 @@ public class SharedBatchUtil {
 
     @Transactional
     public void purgeTablesByProject(ProjectEntity projectEntity) {
+        log.info("Cleaning Tables...");
         this.enumRepository.deleteAllByProjectAndEditable(projectEntity, false);
         this.widgetRepository.deleteAllByProject(projectEntity);
         this.pcfRepository.deleteAllByProject(projectEntity);
@@ -67,6 +68,7 @@ public class SharedBatchUtil {
     }
 
     public void purgeFilesByProject(ProjectEntity projectEntity) throws IOException {
+        log.info("Cleaning CSharp Files...");
         var rootFolderPath = "C:/Users/Usuario"; //TODO tomar valor del sistema
         var joiner = new StringJoiner(File.separator);
         joiner.add(rootFolderPath);

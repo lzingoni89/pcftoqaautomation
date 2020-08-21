@@ -17,10 +17,13 @@ public class WidgetTypeDataLoaderItemProcessor implements ItemProcessor<WidgetTy
 
     @Override
     public WidgetTypeEntity process(WidgetTypeEnum widgetTypeEnum) {
-        if (this.widgetTypeRepository.existsWidgetTypeByTypeAndVersion(widgetTypeEnum, GWVersionEnum.VER_10)) {
-            return null;
+        if (!this.widgetTypeRepository.existsWidgetTypeByTypeAndVersion(widgetTypeEnum, GWVersionEnum.VER_10)) {
+            return new WidgetTypeEntity(widgetTypeEnum, GWVersionEnum.VER_10);
         }
-        return new WidgetTypeEntity(widgetTypeEnum, GWVersionEnum.VER_10);
+        if (!this.widgetTypeRepository.existsWidgetTypeByTypeAndVersion(widgetTypeEnum, GWVersionEnum.VER_9)) {
+            return new WidgetTypeEntity(widgetTypeEnum, GWVersionEnum.VER_9);
+        }
+        return null;
 
     }
 }

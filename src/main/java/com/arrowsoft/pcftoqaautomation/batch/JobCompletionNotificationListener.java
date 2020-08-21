@@ -1,6 +1,7 @@
 package com.arrowsoft.pcftoqaautomation.batch;
 
 import com.arrowsoft.pcftoqaautomation.batch.shared.SharedBatchUtil;
+import com.arrowsoft.pcftoqaautomation.service.GitRepositoryService;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.batch.core.JobExecution;
@@ -12,9 +13,12 @@ import org.springframework.stereotype.Component;
 public class JobCompletionNotificationListener extends JobExecutionListenerSupport {
 
     private final SharedBatchUtil sharedBatchUtil;
+    private final GitRepositoryService gitRepositoryService;
 
-    public JobCompletionNotificationListener(SharedBatchUtil sharedBatchUtil) {
+    public JobCompletionNotificationListener(SharedBatchUtil sharedBatchUtil,
+                                             GitRepositoryService gitRepositoryService) {
         this.sharedBatchUtil = sharedBatchUtil;
+        this.gitRepositoryService = gitRepositoryService;
     }
 
     @SneakyThrows
@@ -26,6 +30,7 @@ public class JobCompletionNotificationListener extends JobExecutionListenerSuppo
         switch (jobName) {
             case "IMPORT_PCF_BATCH":
                 this.sharedBatchUtil.purgeTablesByProject(project);
+                this.gitRepositoryService.pullRepository(project);
                 break;
 
             case "PCF_TO_NET_BATCH":

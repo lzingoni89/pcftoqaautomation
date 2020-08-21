@@ -102,6 +102,13 @@ public class ImportPCFBathUtil {
     }
 
     private WidgetEntity createWidget(PCFEntity pcf, Set<WidgetTypeEntity> widgetTypeSet, Element element, WidgetEntity parent) {
+        try {
+            var tagEnum = WidgetTypeEnum.valueOf(element.getTagName());
+        } catch (Exception e) {
+            log.error("WIDGET NOT FOUND: " + element.getTagName());
+            return null;
+
+        }
         var widgetType = getWidgetTypeEntity(widgetTypeSet, WidgetTypeEnum.valueOf(element.getTagName()));
         if (widgetType == null) {
             log.error("Widget type not found: " + element.getTagName());
