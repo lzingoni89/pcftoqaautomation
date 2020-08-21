@@ -4,6 +4,7 @@ import com.arrowsoft.pcftoqaautomation.enums.GWVersionEnum;
 import com.arrowsoft.pcftoqaautomation.enums.ModuleEnum;
 import com.arrowsoft.pcftoqaautomation.service.CompanyService;
 import com.arrowsoft.pcftoqaautomation.service.dto.company.CompanyDTO;
+import com.arrowsoft.pcftoqaautomation.service.dto.company.GitRepoDTO;
 import com.arrowsoft.pcftoqaautomation.service.dto.company.ProjectDTO;
 import com.arrowsoft.pcftoqaautomation.web.MainLayout;
 import com.vaadin.flow.component.button.Button;
@@ -49,6 +50,7 @@ public class CompanyViewPage extends VerticalLayout implements HasUrlParameter<S
     private final ComboBox<GWVersionEnum> projectVersionField;
     private final TextField projectRootPath;
     private final Checkbox projectAdminGitRepository;
+    private final ComboBox<GitRepoDTO> projectGitRepo;
 
     private final Grid<ProjectDTO> projectGrid;
     private final HorizontalLayout actions;
@@ -68,6 +70,7 @@ public class CompanyViewPage extends VerticalLayout implements HasUrlParameter<S
         this.projectVersionField = createVersionField();
         this.projectRootPath = createTextField("Root Path", false, true);
         this.projectAdminGitRepository = createCheckBox("Admin Git Repository");
+        this.projectGitRepo = createGitRepoField();
 
         this.companyBinder = configCompanyBinder();
         this.projectBinder = configProjectBinder();
@@ -127,6 +130,7 @@ public class CompanyViewPage extends VerticalLayout implements HasUrlParameter<S
         var binder = new Binder<ProjectDTO>();
         binder.bind(projectModuleField, ProjectDTO::getModule, ProjectDTO::setModule);
         binder.bind(projectVersionField, ProjectDTO::getVersion, ProjectDTO::setVersion);
+        binder.bind(projectGitRepo, ProjectDTO::getSelectedBranch, ProjectDTO::setSelectedBranch);
         binder.forField(projectRootPath)
                 .withValidator(new StringLengthValidator(
                         "Please complete the Root Path field", 1, null))
@@ -167,8 +171,8 @@ public class CompanyViewPage extends VerticalLayout implements HasUrlParameter<S
         List<ModuleEnum> moduleList = Arrays.asList(ModuleEnum.values().clone());
         comboBox.setItemLabelGenerator(ModuleEnum::getDesc);
         comboBox.setItems(moduleList);
-
         return comboBox;
+
     }
 
     private ComboBox<GWVersionEnum> createVersionField() {
@@ -177,8 +181,16 @@ public class CompanyViewPage extends VerticalLayout implements HasUrlParameter<S
         List<GWVersionEnum> versionList = Arrays.asList(GWVersionEnum.values().clone());
         comboBox.setItemLabelGenerator(GWVersionEnum::getDesc);
         comboBox.setItems(versionList);
-
         return comboBox;
+
+    }
+
+    private ComboBox<GitRepoDTO> createGitRepoField() {
+        var comboBox = new ComboBox<GitRepoDTO>();
+        comboBox.setLabel("Git Branch Selected");
+        comboBox.setItemLabelGenerator(GitRepoDTO::getBranchView);
+        return comboBox;
+
     }
 
     private Checkbox createCheckBox(String label) {
@@ -217,8 +229,9 @@ public class CompanyViewPage extends VerticalLayout implements HasUrlParameter<S
     }
 
     private void fillProjectForm(FormLayout form) {
-        form.add(projectModuleField, projectVersionField, projectAdminGitRepository);
-        form.add(projectRootPath, 3);
+        form.add(projectModuleField, projectVersionField);
+        form.add(projectAdminGitRepository, 3);
+        form.add(projectRootPath, projectGitRepo);
 
     }
 
@@ -229,8 +242,17 @@ public class CompanyViewPage extends VerticalLayout implements HasUrlParameter<S
         grid.addColumn(ProjectDTO::getVersionView).setHeader("Version");
         grid.addColumn(ProjectDTO::getRootPath).setHeader("Root Path");
         grid.addColumn(ProjectDTO::getAdminGitRepositoryView).setHeader("Admin Git Repository");
+        grid.addColumn(ProjectDTO::getGitBranchRepo).setHeader("Branch selected");
         grid.asSingleSelect().addValueChangeListener(event -> {
-            this.projectBinder.setBean(event.getValue());
+            var projectDTO = event.getValue();
+            if (projectDTO != null && projectDTO.isAdminGitRepository()) {
+                if(projectDTO.getSelectedBranch() != null) {
+                    this.projectGitRepo.setItems(projectDTO.getRemoteRepositories());
+
+                }
+
+            }
+            this.projectBinder.setBean(projectDTO);
             this.projectForm.setVisible(true);
 
         });
@@ -280,22 +302,24 @@ public class CompanyViewPage extends VerticalLayout implements HasUrlParameter<S
     }
 
     private void createOrUpdateProject() {
-        if (projectBinder.getBean() != null) {
-            if (projectBinder.writeBeanIfValid(projectBinder.getBean())) {
-                companyService.createOrUpdateProject(companyBinder.getBean(), projectBinder.getBean());
-                showNotification("Project saved correctly", NotificationVariant.LUMO_SUCCESS);
+        var projectDTO = projectBinder.getBean();
+        if (projectDTO == null) {
+            return;
 
-            } else {
-                BinderValidationStatus<ProjectDTO> validate = projectBinder.validate();
-                List<String> errorTextList = validate.getFieldValidationStatuses()
-                        .stream().filter(BindingValidationStatus::isError)
-                        .map(BindingValidationStatus::getMessage)
-                        .map(Optional::get).distinct()
-                        .collect(Collectors.toList());
-                for (String errorText : errorTextList) {
-                    showNotification(errorText, NotificationVariant.LUMO_ERROR);
+        }
+        if (projectBinder.writeBeanIfValid(projectDTO)) {
+            companyService.createOrUpdateProject(companyBinder.getBean(), projectDTO);
+            showNotification("Project saved correctly", NotificationVariant.LUMO_SUCCESS);
 
-                }
+        } else {
+            BinderValidationStatus<ProjectDTO> validate = projectBinder.validate();
+            List<String> errorTextList = validate.getFieldValidationStatuses()
+                    .stream().filter(BindingValidationStatus::isError)
+                    .map(BindingValidationStatus::getMessage)
+                    .map(Optional::get).distinct()
+                    .collect(Collectors.toList());
+            for (String errorText : errorTextList) {
+                showNotification(errorText, NotificationVariant.LUMO_ERROR);
 
             }
 
