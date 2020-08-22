@@ -9,6 +9,10 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+
+import java.util.concurrent.ThreadPoolExecutor;
 
 @Configuration
 public class GeneralBatchConfiguration {
@@ -38,12 +42,23 @@ public class GeneralBatchConfiguration {
 
     @Bean
     public JobLauncher simpleJobLauncher() throws Exception {
-        SimpleJobLauncher jobLauncher = new SimpleJobLauncher();
+        var jobLauncher = new SimpleJobLauncher();
         jobLauncher.setJobRepository(jobRepository);
         jobLauncher.setTaskExecutor(new SimpleAsyncTaskExecutor());
         jobLauncher.afterPropertiesSet();
         return jobLauncher;
 
+    }
+
+    @Bean
+    public TaskExecutor threadPoolExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(64);
+        executor.setMaxPoolSize(64);
+        executor.setQueueCapacity(64);
+        executor.setRejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy());
+        executor.setThreadNamePrefix("MultiThreaded-");
+        return executor;
     }
 
 }

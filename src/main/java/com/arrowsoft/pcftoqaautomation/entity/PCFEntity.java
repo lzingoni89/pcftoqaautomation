@@ -30,6 +30,9 @@ public class PCFEntity extends BaseEntity {
     @Column(name = "menu_action_ref")
     private String menuActionRef;
 
+    @Column(name = "acc_menu_action_ref")
+    private String acceleratedMenuActions;
+
     @Column(name = "mode")
     private String mode;
 
@@ -52,6 +55,7 @@ public class PCFEntity extends BaseEntity {
         this.pcfName = pcfName;
         this.pcfFilePath = pcfFilePath;
         this.menuActionRef = containerElement.getAttribute("menuActions").split("\\(")[0];
+        this.acceleratedMenuActions = containerElement.getAttribute("acceleratedMenuActions").split("\\(")[0];
         this.mode = containerElement.getAttribute("mode");
         this.pcfType = pcfType;
         this.newPCF = true;

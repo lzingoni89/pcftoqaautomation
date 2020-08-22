@@ -101,7 +101,8 @@ public class GitRepositoryService {
     }
 
     public void pullRepository(ProjectEntity projectEntity) {
-        if (!projectEntity.isAdminGitRepository()
+        if (projectEntity == null
+                || !projectEntity.isAdminGitRepository()
                 || projectEntity.getRootPath() == null
                 || projectEntity.getRootPath().isBlank()) {
             return;
@@ -140,15 +141,18 @@ public class GitRepositoryService {
 
     private void printResults(Process process) {
         var reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        String line = "";
+        var line = "";
         try {
             while ((line = reader.readLine()) != null) {
                 log.info(line);
+
             }
+
         } catch (Exception e) {
             log.error(e);
 
         }
+
     }
 
 }

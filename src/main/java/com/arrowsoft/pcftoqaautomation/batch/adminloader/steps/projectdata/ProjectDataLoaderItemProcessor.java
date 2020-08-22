@@ -2,6 +2,8 @@ package com.arrowsoft.pcftoqaautomation.batch.adminloader.steps.projectdata;
 
 import com.arrowsoft.pcftoqaautomation.entity.CompanyEntity;
 import com.arrowsoft.pcftoqaautomation.entity.ProjectEntity;
+import com.arrowsoft.pcftoqaautomation.enums.CompanyEnum;
+import com.arrowsoft.pcftoqaautomation.enums.GWVersionEnum;
 import com.arrowsoft.pcftoqaautomation.enums.ModuleEnum;
 import com.arrowsoft.pcftoqaautomation.repository.ProjectRepository;
 import lombok.extern.log4j.Log4j2;
@@ -27,13 +29,19 @@ public class ProjectDataLoaderItemProcessor implements ItemProcessor<CompanyEnti
         for (ModuleEnum module : ModuleEnum.values()) {
             if (projectRepository.existsProjectByCompanyAndModule(companyEntity, module)) {
                 continue;
+
             }
-            projects.add(new ProjectEntity(companyEntity, module));
+            projects.add(new ProjectEntity(companyEntity, module, GWVersionEnum.VER_10));
+            if (companyEntity.getCompanyCodIntern() == CompanyEnum.SANDBOX) {
+                projects.add(new ProjectEntity(companyEntity, module, GWVersionEnum.VER_9));
+
+            }
 
         }
 
-        if(projects.isEmpty()) {
+        if (projects.isEmpty()) {
             return null;
+
         }
 
         return projects;

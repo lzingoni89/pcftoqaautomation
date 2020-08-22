@@ -95,9 +95,15 @@ public class TemplateBatchUtil {
             var renderIDCharJoiner = project.getVersion().getRenderIDCharJoiner();
             if (this.pcfRepository.existsByProjectAndPcfNameAndPcfFilePathAndPcfType(project, pcfName, pcfPath, locationGroupType)) {
                 var pcf = this.pcfRepository.findFirstByProjectAndPcfNameAndPcfFilePath(project, pcfName, pcfPath);
-                if(!pcf.getMenuActionRef().isBlank()) {
+                if (!pcf.getMenuActionRef().isBlank()) {
                     var menuActionWidgets = this.widgetRepository.findByPcfNameOrderById(pcf.getMenuActionRef());
                     var menuActionRenderID = refRenderID + renderIDCharJoiner + pcf.getMenuActionRef();
+                    populateAllWidgets(renderIDCharJoiner, widgetTypesAllowed, widgets, menuActionWidgets, menuActionRenderID);
+
+                }
+                if (!pcf.getAcceleratedMenuActions().isBlank()) {
+                    var menuActionWidgets = this.widgetRepository.findByPcfNameOrderById(pcf.getAcceleratedMenuActions());
+                    var menuActionRenderID = refRenderID + renderIDCharJoiner + pcf.getAcceleratedMenuActions();
                     populateAllWidgets(renderIDCharJoiner, widgetTypesAllowed, widgets, menuActionWidgets, menuActionRenderID);
 
                 }
@@ -241,7 +247,7 @@ public class TemplateBatchUtil {
 
         }
         var pcf = this.pcfRepository.findFirstByProjectAndPcfName(widgetEntity.getProject(), pcfRef);
-        if(pcf == null) {
+        if (pcf == null) {
             log.error("PCF Not Found: " + pcfRef);
             return null;
         }
