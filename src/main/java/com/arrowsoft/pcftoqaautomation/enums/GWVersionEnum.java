@@ -7,8 +7,8 @@ import java.util.Arrays;
 @Getter
 public enum GWVersionEnum {
 
-    VER_9("VER_9", "9.0", ":"),
-    VER_10("VER_10", "10.0", "-");
+    VER_10("VER_10", "10.0", "-"),
+    VER_9("VER_9", "9.0", ":");
 
     private final String code;
     private final String desc;

@@ -1,5 +1,6 @@
 package com.arrowsoft.pcftoqaautomation.web;
 
+import com.arrowsoft.pcftoqaautomation.enums.GWVersionEnum;
 import com.arrowsoft.pcftoqaautomation.service.CompanyService;
 import com.arrowsoft.pcftoqaautomation.service.dto.company.CompanyDTO;
 import com.arrowsoft.pcftoqaautomation.web.company.CompanyViewPage;
@@ -78,8 +79,9 @@ public class MainLayout extends AppLayout implements RouterLayout {
 
         }
         if (widgetTab.isSelected()) {
-            drawerTabs.add(new Tab("lalala 1"));
-            drawerTabs.add(new Tab("lalala 2"));
+            for (GWVersionEnum version : GWVersionEnum.values()) {
+                drawerTabs.add(new Tab(new RouterLink(version.getDesc(), WidgetsViewPage.class, version.getCode())));
+            }
 
         }
         if (setupTab.isSelected()) {
