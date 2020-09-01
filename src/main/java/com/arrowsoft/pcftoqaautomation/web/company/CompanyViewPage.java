@@ -91,26 +91,21 @@ public class CompanyViewPage extends VerticalLayout implements HasUrlParameter<S
     @Override
     public void setParameter(BeforeEvent beforeEvent, @WildcardParameter String parameter) {
         this.projectForm.setVisible(false);
-        if (parameter.isEmpty()) {
-            this.title.setText("Summary");
-            this.companyForm.removeAll();
-            setVisibleComponents(false);
-            this.companyBinder.setBean(null);
-            this.projectBinder.setBean(null);
-            return;
+        if (parameter.isBlank()) {
+            parameter = "1";
 
         }
         var dto = companyService.findCompanyByID(parameter);
         this.title.setText(dto.getName());
-        setVisibleComponents(true);
+        setVisibleComponents();
         populateForm(dto);
 
     }
 
-    private void setVisibleComponents(boolean visible) {
-        this.actions.setVisible(visible);
-        this.projectGrid.setVisible(visible);
-        this.projectTitle.setVisible(visible);
+    private void setVisibleComponents() {
+        this.actions.setVisible(true);
+        this.projectGrid.setVisible(true);
+        this.projectTitle.setVisible(true);
 
     }
 
@@ -246,7 +241,7 @@ public class CompanyViewPage extends VerticalLayout implements HasUrlParameter<S
         grid.asSingleSelect().addValueChangeListener(event -> {
             var projectDTO = event.getValue();
             if (projectDTO != null && projectDTO.isAdminGitRepository()) {
-                if(projectDTO.getSelectedBranch() != null) {
+                if (projectDTO.getSelectedBranch() != null) {
                     this.projectGitRepo.setItems(projectDTO.getRemoteRepositories());
 
                 }

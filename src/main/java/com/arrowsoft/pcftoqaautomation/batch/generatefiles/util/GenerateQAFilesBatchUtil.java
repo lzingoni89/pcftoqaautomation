@@ -30,16 +30,7 @@ public class GenerateQAFilesBatchUtil {
         var enumEntities = enumRepository.findByProjectAndName(project, enumName);
         var values = new ArrayList<String>();
         for (EnumEntity enumEntity : enumEntities) {
-            var value = enumEntity.getValue();
-            if (value.isBlank()) {
-                continue;
-
-            }
-            values.addAll(Arrays.asList(value.split(",")));
-
-        }
-        if (values.isEmpty()) {
-            return null;
+            values.addAll(Arrays.asList(enumEntity.getValue().split(",")));
 
         }
         transport.setValues(values);

@@ -16,7 +16,7 @@ import java.util.Set;
 public class EnumEntity extends BaseEntity {
 
     @Transient
-    private static final String JOINER_CHAR = ",";
+    public static final String JOINER_CHAR = ",";
 
     @JoinColumn(name = "project_id")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -59,7 +59,11 @@ public class EnumEntity extends BaseEntity {
     }
 
     private String getValueJoined(Set<String> value) {
-        return value.stream().sorted().reduce((partialString, element) -> partialString + JOINER_CHAR + element).orElse("");
+        return value.stream()
+                .filter((element) -> !element.isBlank())
+                .sorted()
+                .reduce((partialString, element) -> partialString + JOINER_CHAR + element)
+                .orElse("");
 
     }
 

@@ -3,7 +3,9 @@ package com.arrowsoft.pcftoqaautomation.web;
 import com.arrowsoft.pcftoqaautomation.enums.GWVersionEnum;
 import com.arrowsoft.pcftoqaautomation.service.CompanyService;
 import com.arrowsoft.pcftoqaautomation.service.dto.company.CompanyDTO;
+import com.arrowsoft.pcftoqaautomation.web.batch.BatchViewPage;
 import com.arrowsoft.pcftoqaautomation.web.company.CompanyViewPage;
+import com.arrowsoft.pcftoqaautomation.web.enums.EnumsViewPage;
 import com.arrowsoft.pcftoqaautomation.web.setup.SetupViewPage;
 import com.arrowsoft.pcftoqaautomation.web.util.MessagesDisplaySource;
 import com.arrowsoft.pcftoqaautomation.web.widget.WidgetsViewPage;
@@ -26,6 +28,8 @@ public class MainLayout extends AppLayout implements RouterLayout {
     private final Tab companyTab;
     private final Tab widgetTab;
     private final Tab setupTab;
+    private final Tab enumTab;
+    private final Tab batchTab;
 
     public MainLayout(MessagesDisplaySource displaySource,
                       CompanyService companyService) {
@@ -34,6 +38,8 @@ public class MainLayout extends AppLayout implements RouterLayout {
         this.companyTab = createCompanyTab();
         this.widgetTab = createWidgetTab();
         this.setupTab = createSetupTab();
+        this.enumTab = createEnumTab();
+        this.batchTab = createBatchesTab();
         this.drawerTabs = createDrawerTabs();
         setPrimarySection(AppLayout.Section.DRAWER);
         createNavbar();
@@ -42,7 +48,7 @@ public class MainLayout extends AppLayout implements RouterLayout {
     }
 
     private void createNavbar() {
-        var tabsNavbar = new Tabs(companyTab, widgetTab, setupTab);
+        var tabsNavbar = new Tabs(companyTab, widgetTab, enumTab, batchTab, setupTab);
         tabsNavbar.addSelectedChangeListener(selectedChangeEvent -> {
             populateDrawer();
 
@@ -68,10 +74,19 @@ public class MainLayout extends AppLayout implements RouterLayout {
 
     }
 
+    private Tab createEnumTab() {
+        return new Tab(new RouterLink(this.displaySource.getDisplayValue("navbar.tab.enum.display"), EnumsViewPage.class));
+
+    }
+
+    private Tab createBatchesTab() {
+        return new Tab(new RouterLink(this.displaySource.getDisplayValue("navbar.tab.batches.display"), BatchViewPage.class));
+
+    }
+
     private void populateDrawer() {
         drawerTabs.removeAll();
         if (companyTab.isSelected()) {
-            drawerTabs.add(new Tab(new RouterLink("Summary", CompanyViewPage.class)));
             for (CompanyDTO company : companyService.getCompanyList()) {
                 drawerTabs.add(new Tab(new RouterLink(company.getName(), CompanyViewPage.class, company.getId().toString())));
 
@@ -80,8 +95,21 @@ public class MainLayout extends AppLayout implements RouterLayout {
         }
         if (widgetTab.isSelected()) {
             for (GWVersionEnum version : GWVersionEnum.values()) {
-                drawerTabs.add(new Tab(new RouterLink(version.getDesc(), WidgetsViewPage.class, version.getCode())));
+                drawerTabs.add(new Tab(new RouterLink("Version " + version.getDesc(), WidgetsViewPage.class, version.getCode())));
+                
             }
+
+        }
+        if (enumTab.isSelected()) {
+            for (CompanyDTO company : companyService.getCompanyList()) {
+                drawerTabs.add(new Tab(new RouterLink(company.getName(), EnumsViewPage.class, company.getId().toString())));
+
+            }
+
+        }
+        if (batchTab.isSelected()) {
+            drawerTabs.add(new Tab("AAAAAAAAAAA 1"));
+            drawerTabs.add(new Tab("zxczxc 2"));
 
         }
         if (setupTab.isSelected()) {

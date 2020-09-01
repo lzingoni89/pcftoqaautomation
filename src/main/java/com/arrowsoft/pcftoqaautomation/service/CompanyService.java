@@ -30,7 +30,7 @@ public class CompanyService {
     }
 
     public List<CompanyDTO> getCompanyList() {
-        return this.companyRepository.findAll().stream().map(CompanyDTO::new).collect(Collectors.toList());
+        return this.companyRepository.findAllByOrderById().stream().map(CompanyDTO::new).collect(Collectors.toList());
 
     }
 
