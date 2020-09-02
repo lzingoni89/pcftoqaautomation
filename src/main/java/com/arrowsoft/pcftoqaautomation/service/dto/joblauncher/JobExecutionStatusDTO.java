@@ -1,5 +1,6 @@
 package com.arrowsoft.pcftoqaautomation.service.dto.joblauncher;
 
+import com.arrowsoft.pcftoqaautomation.batch.shared.SharedBatchParameterCodes;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.batch.core.JobExecution;
@@ -23,6 +24,9 @@ public class JobExecutionStatusDTO {
     private Date lastUpdated;
     private String exitStatusCode;
     private String exitStatusDesc;
+    private String company;
+    private String module;
+    private String version;
     private Set<StepExecutionStatusDTO> steps;
 
     public JobExecutionStatusDTO(JobExecution jobExecution) {
@@ -38,6 +42,10 @@ public class JobExecutionStatusDTO {
         var exitStatus = jobExecution.getExitStatus();
         this.exitStatusCode = exitStatus.getExitCode();
         this.exitStatusDesc = exitStatus.getExitDescription();
+        var parameters = jobExecution.getJobParameters();
+        this.company = parameters.getString(SharedBatchParameterCodes.COMPANY_CODE);
+        this.module = parameters.getString(SharedBatchParameterCodes.MODULE_CODE);
+        this.version = parameters.getString(SharedBatchParameterCodes.VERSION_CODE);
         steps = new HashSet<>();
         for (StepExecution step : jobExecution.getStepExecutions()) {
             steps.add(new StepExecutionStatusDTO(step));

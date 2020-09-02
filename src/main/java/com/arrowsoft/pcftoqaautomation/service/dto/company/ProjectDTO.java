@@ -45,6 +45,11 @@ public class ProjectDTO {
 
     }
 
+    public String getShortName() {
+        return this.getModuleView() + " - " + this.getVersionView();
+
+    }
+
     public YesNoEnum getAdminGitRepositoryView() {
         return this.adminGitRepository ? YesNoEnum.Yes : YesNoEnum.No;
 

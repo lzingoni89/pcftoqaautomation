@@ -3,6 +3,7 @@ package com.arrowsoft.pcftoqaautomation.web;
 import com.arrowsoft.pcftoqaautomation.enums.GWVersionEnum;
 import com.arrowsoft.pcftoqaautomation.service.CompanyService;
 import com.arrowsoft.pcftoqaautomation.service.dto.company.CompanyDTO;
+import com.arrowsoft.pcftoqaautomation.web.batch.BatchHistoryPage;
 import com.arrowsoft.pcftoqaautomation.web.batch.BatchViewPage;
 import com.arrowsoft.pcftoqaautomation.web.company.CompanyViewPage;
 import com.arrowsoft.pcftoqaautomation.web.enums.EnumsViewPage;
@@ -12,6 +13,7 @@ import com.arrowsoft.pcftoqaautomation.web.widget.WidgetsViewPage;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.page.Push;
 import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.tabs.Tabs;
 import com.vaadin.flow.router.RouterLayout;
@@ -19,6 +21,7 @@ import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.theme.Theme;
 import com.vaadin.flow.theme.lumo.Lumo;
 
+@Push
 @Theme(value = Lumo.class, variant = Lumo.LIGHT)
 public class MainLayout extends AppLayout implements RouterLayout {
 
@@ -87,29 +90,29 @@ public class MainLayout extends AppLayout implements RouterLayout {
     private void populateDrawer() {
         drawerTabs.removeAll();
         if (companyTab.isSelected()) {
-            for (CompanyDTO company : companyService.getCompanyList()) {
+            for (var company : companyService.getCompanyList()) {
                 drawerTabs.add(new Tab(new RouterLink(company.getName(), CompanyViewPage.class, company.getId().toString())));
 
             }
 
         }
         if (widgetTab.isSelected()) {
-            for (GWVersionEnum version : GWVersionEnum.values()) {
+            for (var version : GWVersionEnum.values()) {
                 drawerTabs.add(new Tab(new RouterLink("Version " + version.getDesc(), WidgetsViewPage.class, version.getCode())));
-                
+
             }
 
         }
         if (enumTab.isSelected()) {
-            for (CompanyDTO company : companyService.getCompanyList()) {
+            for (var company : companyService.getCompanyList()) {
                 drawerTabs.add(new Tab(new RouterLink(company.getName(), EnumsViewPage.class, company.getId().toString())));
 
             }
 
         }
         if (batchTab.isSelected()) {
-            drawerTabs.add(new Tab("AAAAAAAAAAA 1"));
-            drawerTabs.add(new Tab("zxczxc 2"));
+            drawerTabs.add(new Tab(new RouterLink(this.displaySource.getDisplayValue("navbar.tab.batches.submenu.batches"), BatchViewPage.class)));
+            drawerTabs.add(new Tab(new RouterLink(this.displaySource.getDisplayValue("navbar.tab.batches.submenu.history"), BatchHistoryPage.class)));
 
         }
         if (setupTab.isSelected()) {

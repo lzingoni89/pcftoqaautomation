@@ -1,6 +1,7 @@
 package com.arrowsoft.pcftoqaautomation.service;
 
 import com.arrowsoft.pcftoqaautomation.batch.BatchProcessCode;
+import com.arrowsoft.pcftoqaautomation.batch.shared.SharedBatchParameterCodes;
 import com.arrowsoft.pcftoqaautomation.service.dto.joblauncher.BatchExecutionDTO;
 import com.arrowsoft.pcftoqaautomation.service.dto.joblauncher.BatchProcessCodeDTO;
 import com.arrowsoft.pcftoqaautomation.service.dto.joblauncher.JobExecutionStatusDTO;
@@ -17,10 +18,8 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.Date;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringJoiner;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Log4j2
 @Service
@@ -55,7 +54,7 @@ public class JobLauncherService {
     private String jobParametersToString(BatchExecutionDTO batchExecutionDTO) {
         var parameters = new StringJoiner(",");
         if (batchExecutionDTO.getParameters() != null) {
-            for (Map.Entry<String, String> param : batchExecutionDTO.getParameters().entrySet()) {
+            for (var param : batchExecutionDTO.getParameters().entrySet()) {
                 parameters.add(param.getKey() + "=" + param.getValue());
 
             }
@@ -89,6 +88,21 @@ public class JobLauncherService {
 
     }
 
+    public void terminateExecution(Long executionId) {
+        try {
+            superAutoJobOperator.stop(executionId);
+            superAutoJobOperator.abandon(executionId);
+
+        } catch (NoSuchJobExecutionException
+                | JobExecutionNotRunningException
+                | JobExecutionAlreadyRunningException e) {
+            log.error(e.getMessage());
+            log.error(e);
+
+        }
+
+    }
+
     public void killJob(String batchProcessCode) throws NoSuchJobException, NoSuchJobExecutionException, JobExecutionAlreadyRunningException {
         if (batchProcessCode == null || batchProcessCode.isBlank()) {
             return;
@@ -101,6 +115,48 @@ public class JobLauncherService {
             superAutoJobOperator.abandon(executionId);
 
         }
+
+    }
+
+    public boolean isJobRunning(BatchExecutionDTO batchExecutionDTO) {
+        var jobExecutions = this.jobExplorer
+                .findRunningJobExecutions(batchExecutionDTO.getBatchProcessCode())
+                .iterator();
+        if (!jobExecutions.hasNext()) {
+            return false;
+
+        }
+        var parameters = batchExecutionDTO.getParameters();
+        if (parameters == null) {
+            return true;
+
+        }
+        while (jobExecutions.hasNext()) {
+            var jobParameters = jobExecutions.next().getJobParameters();
+            if (Objects.equals(jobParameters.getString(SharedBatchParameterCodes.COMPANY_CODE), parameters.get(SharedBatchParameterCodes.COMPANY_CODE))
+                    && Objects.equals(jobParameters.getString(SharedBatchParameterCodes.MODULE_CODE), parameters.get(SharedBatchParameterCodes.MODULE_CODE))
+                    && Objects.equals(jobParameters.getString(SharedBatchParameterCodes.VERSION_CODE), parameters.get(SharedBatchParameterCodes.VERSION_CODE))) {
+                return true;
+
+            }
+
+        }
+        return false;
+
+    }
+
+    public Set<JobExecutionStatusDTO> getWorkingJobs() {
+        var jobs = new HashSet<JobExecutionStatusDTO>();
+        for (var batchCode : BatchProcessCode.values()) {
+            var runningJobs = this.jobExplorer.findRunningJobExecutions(batchCode.getCode());
+            if (runningJobs.isEmpty()) {
+                continue;
+
+            }
+            jobs.addAll(runningJobs.stream().map(JobExecutionStatusDTO::new).collect(Collectors.toSet()));
+
+        }
+        return jobs;
 
     }
 

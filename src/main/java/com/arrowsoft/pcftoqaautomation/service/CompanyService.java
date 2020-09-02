@@ -44,13 +44,18 @@ public class CompanyService {
             return null;
 
         }
-        companyDTO.setProjectList(this.projectRepository
-                .findAllByCompany_Id(companyLongID)
-                .stream().map(ProjectDTO::new)
-                .collect(Collectors.toList()));
+        companyDTO.setProjectList(getProjectListByCompany(companyLongID));
         gitRepositoryService.loadGitInformation(companyDTO.getProjectList());
         return companyDTO;
 
+    }
+
+    public List<ProjectDTO> getProjectListByCompany(Long companyId) {
+        return this.projectRepository
+                .findAllByCompany_Id(companyId)
+                .stream()
+                .map(ProjectDTO::new)
+                .collect(Collectors.toList());
     }
 
     public void updateCompany(CompanyDTO companyDTO) {
